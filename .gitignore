@@ -4,3 +4,5 @@
 texturas/
 downloads
 modelos
+*.o
+tronRace
