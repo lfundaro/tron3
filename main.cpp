@@ -2,8 +2,21 @@
 #include <iostream>
 #include <GL/gl.h>
 #include <GL/glut.h>
+#include <vector>
+#include "include/TriMesh.h"
+#include "include/XForm.h"
+#include "include/TriMesh_algo.h"
 
 using namespace std;
+
+
+vector<TriMesh *> meshes;
+vector<xform> xforms;
+vector<bool> visible;
+vector<string> filenames;
+TriMesh::BSphere global_bsph;
+xform global_xf;
+int current_mesh = -1;
 
 
 void display(void) {
@@ -12,7 +25,7 @@ void display(void) {
   glLoadIdentity();
   
   glColor3f(1.0,0.0,0.0);
-  glutSolidCube(1.0);
+  glutSolidCube(2.0);
 
   glutSwapBuffers();
   glFlush ();
@@ -25,11 +38,8 @@ void reshape (int w, int h) {
   glViewport (0, 0, (GLsizei) w, (GLsizei) h);
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(60.0f, aspectratio, 0.5, 20.0);
-  //  gluPerspective(10.0, 1, 0.5, 100.0);
+  gluPerspective(200.0f, aspectratio, 0.5, 200.0);
   glMatrixMode(GL_MODELVIEW);
-  // glEnable(GL_LIGHTING);
-  // glEnable(GL_LIGHT0);
 }
 
 int main(int argc, char** argv) {
@@ -42,15 +52,15 @@ int main(int argc, char** argv) {
   
   // Cargar figura .ply 
   
-  // const char *filename = argv[2];
-  // TriMesh *themesh = TriMesh::read(filename);
-  // themesh->need_normals();
-  // themesh->need_tstrips();
-  // themesh->need_bsphere();
-  // meshes.push_back(themesh);
-  // xforms.push_back(xform());
-  // visible.push_back(true);
-  // filenames.push_back(filename);
+  const char *filename = argv[2];
+  TriMesh *themesh = TriMesh::read(filename);
+  themesh->need_normals();
+  themesh->need_tstrips();
+  themesh->need_bsphere();
+  meshes.push_back(themesh);
+  xforms.push_back(xform());
+  visible.push_back(true);
+  filenames.push_back(filename);
 
   glutCreateWindow (argv[0]);
 
@@ -59,7 +69,7 @@ int main(int argc, char** argv) {
   glEnable( GL_LINE_SMOOTH );
   glEnable( GL_POLYGON_SMOOTH );
   glClearDepth (1.0f);
-  glClearColor(1.0,1.0,1.0,1.0f);
+  glClearColor(0.0,0.0,0.0,0.0f);
   glShadeModel(GL_SMOOTH);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
@@ -69,7 +79,6 @@ int main(int argc, char** argv) {
   glutDisplayFunc(display);
   glutMainLoop();
 
-  exit (EXIT_SUCCESS);
   return 0;
 }
 
