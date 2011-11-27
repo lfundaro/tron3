@@ -7,3 +7,4 @@ modelos
 *.o
 tronRace
 trimesh2
+semantic.cache
