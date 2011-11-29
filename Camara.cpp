@@ -1,4 +1,3 @@
-#include <GL/glut.h>
 #include "include/Camara.h"
 
 using namespace std;
@@ -18,7 +17,6 @@ void Camara::go(float tamX, float tamY, float giroH, float giroV,
     gluLookAt (0.0, (-(tamX+2))/10, (tamY+2)/10*6,
                0.0+giroH, giroV+(-(tamY+2))/20, (-(tamX+2))/3,
                0.0,1, 0.0);
-    cout << (-(tamX+2))/10 << " " << (tamY+2)/10*6 << " " << 0.0+giroH << " " << giroV+(-(tamY+2))/20 << " " << (-(tamX+2))/3 << endl;
   } else if (tamX < tamY) {
     gluLookAt (0.0, (-(tamY+2))/10, (tamY+2)/10*6,
                0.0+giroH, giroV+(-(tamY+2))/20, (-(tamY+2))/3,
