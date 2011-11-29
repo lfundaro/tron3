@@ -14,9 +14,9 @@
       <largo> 100 </largo>
     </tablero>
     <salida>
-      <puntos>
+      <punto>
         <x> 50 </x> <y>100</y>
-      </puntos>
+      </punto>
     </salida>
     <terrenoBN>
       <textura>

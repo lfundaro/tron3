@@ -1,5 +1,5 @@
 GCC = g++
-OPS = -fopenmp
+OPS = -fopenmp -g
 LINK_OPS = -lglut -lGL -lGLU -lX11  -lm -L/usr/X11R6/lib
 OBJS = main.o Parser.o Camara.o ModeloDatos.o Elementos.o glm.o \
 libtrimesh.a tinyxml.a

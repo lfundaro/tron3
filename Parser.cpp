@@ -35,92 +35,78 @@ Trayectoria parseTrayectoria(TiXmlHandle rootTrayectoria)
   return tr;
 }
 
-Jugador parseJugador(TiXmlHandle rootJugador) 
+Jugador parseJugador(TiXmlHandle rootJugador, int vidas) 
 {
   // disparo
-  TiXmlElement *pElem = rootJugador.FirstChild("disparo").Element();
-  double disp = atof(pElem->GetText());
-  TiXmlHandle rootTrayectoria(rootJugador.FirstChild("trayectoria").Element());
-  Trayectoria tr = parseTrayectoria(rootTrayectoria);
-  Punto posInicial = tr.listaPuntos[0];
-  Jugador jug(disp,tr, posInicial);
+  TiXmlElement *pElem = rootJugador.FirstChild("velocidad").Element();
+  double velocidad = atof(pElem->GetText());
+  pElem = rootJugador.FirstChild("turbo").Element();
+  int turbo = atoi(pElem->GetText());
+  pElem = rootJugador.FirstChild("velocidadTurbo").Element();
+  double velocidadTurbo = atof(pElem->GetText());
+  pElem = rootJugador.FirstChild("maya").Element();
+  TiXmlHandle rootMaya(pElem);
+  pElem = rootMaya.FirstChild("archivo").Element();
+  char *archivoMaya = strdup(pElem->GetText());
+  vector<Vertice> vv = vector<Vertice>();
+  Jugador jug(vidas, velocidad, turbo, velocidadTurbo, archivoMaya,
+              vv);
   return jug;
 }
 
-Jugador parseContrincante(TiXmlHandle rootContrincante) 
+Contrincante parseContrincante(TiXmlHandle rootContrincante) 
 {
-  return parseJugador(rootContrincante);
+  TiXmlElement *pElem = rootContrincante.FirstChild("trayectoria").Element();
+  TiXmlHandle rootTrayectoria(pElem);
+  Trayectoria tr = parseTrayectoria(rootTrayectoria);
+  pElem = rootContrincante.FirstChild("maya").Element();
+  TiXmlHandle rootMaya(pElem);
+  pElem = rootMaya.FirstChild("archivo").Element();
+  char* archivoMaya = strdup(pElem->GetText());
+  Contrincante ctr = Contrincante(tr, archivoMaya);
+  return ctr;
 }
 
-vector<Objeto*> parseObjetos(TiXmlHandle rootObjetos) 
+vector<Objeto> parseObjetos(TiXmlHandle rootObjetos) 
 {
   // cantidad 
   TiXmlElement *pElem = rootObjetos.FirstChild("cantidad").Element();
    int cant = atoi(pElem->GetText());
   // objetos
-  vector<Objeto*> listObjetos;
+  vector<Objeto> listObjetos;
   int i = 0;
   for(TiXmlElement *nodoObjeto = rootObjetos.FirstChild("objeto").Element();
       i < cant; nodoObjeto = nodoObjeto->NextSiblingElement())
     {
       TiXmlHandle rootObjeto(nodoObjeto);
-      if ((pElem = rootObjeto.FirstChild("maya").Element()) != NULL)
-        {
-          TiXmlHandle rootMaya(pElem);
-          // archivo
-          pElem = rootMaya.FirstChild("archivo").Element();
-          char *archivo = strdup(pElem->GetText());
-          // x 
-          pElem = rootMaya.FirstChild("x").Element();
-          int x = atoi(pElem->GetText());
-          // y 
-          pElem = rootMaya.FirstChild("y").Element();
-          int y = atoi(pElem->GetText());
-          Punto pto(x,y);
-          enum tipoObjeto tipo = MAYA;
-          ObjetoMaya *objMaya = new ObjetoMaya(tipo,3,archivo,pto);
-          listObjetos.push_back(objMaya);
-        }
-      else if // Objeto es cubo ?
-        ((pElem = rootObjeto.FirstChild("cubo").Element()) != NULL) 
-        {
-          pElem = rootObjeto.FirstChild("cubo").Element();
-          TiXmlHandle rootCubo(pElem);
-          // x
-          pElem = rootCubo.FirstChild("x").Element();
-          int x = atoi(pElem->GetText());
-          // y 
-          pElem = rootCubo.FirstChild("y").Element();
-          int y = atoi(pElem->GetText());
-          Punto pto(x,y);
-          // tamano
-          pElem = rootCubo.FirstChild("tamano").Element();
-          int tam = atoi(pElem->GetText());
-          enum tipoObjeto tipo = CUBO;
-          ObjetoCubo *objCubo = new ObjetoCubo(tipo,3,tam,pto);
-          listObjetos.push_back(objCubo);
-        }
-      else  // Objeto es esfera
-        {
-          pElem = rootObjeto.FirstChild("esfera").Element();
-          TiXmlHandle rootEsfera(pElem);
-          // x 
-          pElem = rootEsfera.FirstChild("x").Element();
-          int x = atoi(pElem->GetText());
-          // Y 
-          pElem = rootEsfera.FirstChild("y").Element();
-          int y = atoi(pElem->GetText());
-          Punto pto(x,y);
-          // radio
-          pElem = rootEsfera.FirstChild("radio").Element();
-          double rad = atof(pElem->GetText());
-          enum tipoObjeto tipo = ESFERA;
-          ObjetoEsfera *objEsf = new ObjetoEsfera(tipo,3,pto,rad);
-          listObjetos.push_back(objEsf);
-        }
+      pElem = rootObjeto.FirstChild("maya").Element();
+      TiXmlHandle rootMaya(pElem);
+      // archivo
+      pElem = rootMaya.FirstChild("archivo").Element();
+      char *archivo = strdup(pElem->GetText());
+      // x 
+      pElem = rootMaya.FirstChild("x").Element();
+      int x = atoi(pElem->GetText());
+      // y 
+      pElem = rootMaya.FirstChild("y").Element();
+      int y = atoi(pElem->GetText());
+      Punto pto(x,y);
+      Objeto obj = Objeto(pto, archivo);
+      listObjetos.push_back(obj);
       i++;
     }
   return listObjetos;
+}
+
+Tablero parseTablero(TiXmlHandle rootTablero) {
+  // Ancho
+  TiXmlElement *pElem = rootTablero.FirstChild("ancho").Element();
+  double ancho = atof(pElem->GetText());
+  // Largo
+  pElem = rootTablero.FirstChild("largo").Element();
+  double largo = atof(pElem->GetText());
+  Tablero tab(ancho, largo);
+  return tab;
 }
 
 Nivel parseNivel(TiXmlHandle rootNivel)
@@ -129,25 +115,38 @@ Nivel parseNivel(TiXmlHandle rootNivel)
   // Identificador 
   TiXmlElement *pElem = rootNivel.FirstChild("id").Element();
   int ident = atoi(pElem->GetText());
-  // Tiempo de juego
-  pElem = rootNivel.FirstChild("tiempo_juego").Element();
-  int tmpJuego = atoi(pElem->GetText());
+  // Vidas
+  pElem = rootNivel.FirstChild("vidas").Element();
+  int vidas = atoi(pElem->GetText());
+  // Tablero
+  pElem = rootNivel.FirstChild("tablero").Element();
+  TiXmlHandle rootTablero(pElem);
+  Tablero tab = parseTablero(rootTablero);
+  // Salida
+  pElem = rootNivel.FirstChild("salida").Element();
+  TiXmlHandle rootSalida(pElem);
+  pElem = rootSalida.FirstChild("punto").Element();
+  TiXmlHandle rootPunto(pElem);
+  Punto salida = parsePunto(rootPunto);
+  pElem = rootNivel.FirstChild("terrenoBN").FirstChild("textura").FirstChild
+    ("archivo").Element();
+  char * terrenoBN = strdup(pElem->GetText());
   // Jugador 
   pElem = rootNivel.FirstChild("jugador").Element();
   TiXmlHandle rootJugador(pElem);
-  Jugador jug = parseJugador(rootJugador);
+  Jugador jug = parseJugador(rootJugador, vidas);
   // Número de contrincantes
   pElem = rootNivel.FirstChild("contrincantes").Element();
   int numContr = atoi(pElem->GetText());
   // Iterar sobre los contrincantes 
-  vector<Jugador> listaContr;
+  vector<Contrincante> listaContr;
   int i = 0;
   for(TiXmlElement *nodoContrincantes = 
         rootNivel.FirstChild("contrincante").Element();
       i < numContr; nodoContrincantes = nodoContrincantes->NextSiblingElement())
     {
       TiXmlHandle rootContrincante(nodoContrincantes);
-      Jugador ctr = parseContrincante(rootContrincante);
+      Contrincante ctr = parseContrincante(rootContrincante);
       listaContr.push_back(ctr);
       i++;
     }
@@ -158,9 +157,10 @@ Nivel parseNivel(TiXmlHandle rootNivel)
   // Lista de objetos
   pElem = rootNivel.FirstChild("objetos").Element();
   TiXmlHandle rootObjetos(pElem);
-  vector<Objeto*> listaObjetos = parseObjetos(rootObjetos);
+  vector<Objeto> listaObjetos = parseObjetos(rootObjetos);
   // Crear Nivel 
-  Nivel nv(ident,tmpJuego,jug,numContr,listaContr,cantObjetos,listaObjetos);
+  Nivel nv(ident,vidas,tab,salida,terrenoBN,jug,numContr,listaContr,
+           cantObjetos,listaObjetos);
   return nv;
 }
 
@@ -193,5 +193,4 @@ Juego parse (char *archivo)
     }
   j = Juego(numNiveles, lstNivel);
   return j;
-  
 }

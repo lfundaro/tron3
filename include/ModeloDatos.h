@@ -15,8 +15,6 @@
 
 using namespace std;
 
-enum tipoObjeto {MAYA, CUBO, ESFERA, NODEF};
-
 class Punto
 {
  public:
@@ -44,33 +42,47 @@ class Punto
   void Print();
 };
 
-class Disco 
-{
+class Vertice {
+  double x;
+  double y;
+  double z; 
+
+  Vertice() {
+    x = 0.0;
+    y = 0.0;
+    z = 0.0;
+  }
+
+  Vertice(double a, double b, double c) {
+    x = a;
+    y = b;
+    z = c;
+  }
+};
+
+class Tablero {
  public:
-  int tiroDirecto; 
-  int vida; 
-  int enCurso;
-  Punto posActual;
+  double ancho;
+  double largo;
 
-  Disco() 
-    {
-      tiroDirecto = 1;
-      vida = 15;
-      enCurso = 0;
-      posActual = Punto();
-    }
-  
-  Disco(Punto pos) 
-    {
-      tiroDirecto = 1;
-      vida = 15;
-      enCurso = 0;
-      posActual = pos;
-    }
+  Tablero() {
+    ancho = 0.0;
+    largo = 0.0;
+  }
 
-  void decVida();
-  void cambiarModo();
-  void dibujarDisco(Punto posActual);
+  Tablero(double a, double l) {
+    ancho = a;
+    largo = l;
+  }
+
+  // getters
+  double getAncho() {return ancho;}
+  double getLargo() {return largo;}
+
+  // setters
+  void setAncho(double a) {ancho = a;}
+  void setLargo(double l) {largo = l;}
+  void Print();
 };
 
 class Trayectoria
@@ -80,9 +92,6 @@ class Trayectoria
   int numPuntos;
   vector<Punto> listaPuntos;
   int origen;
-  double pendiente;
-  double x_1;
-  double y_1;
   double lambdaX;
   double lambdaY;
   time_t timeStamp;
@@ -94,8 +103,6 @@ class Trayectoria
       numPuntos = 0;
       listaPuntos = vector<Punto>();
       origen = 0;
-      x_1 = 0.0;
-      y_1 = 0.0;
       lambdaX = 0.0;
       lambdaY = 0.0;
       time(&timeStamp);
@@ -107,25 +114,18 @@ class Trayectoria
       numPuntos = npuntos;
       listaPuntos = lstPuntos;
       origen = 0;
-      x_1 = listaPuntos[origen].getX();
-      y_1 = listaPuntos[origen].getY();
       lambdaX = 0.0;
       lambdaY = 0.0;
       time(&timeStamp);
     }
 
-  void set_x_1(double val);
-  void set_y_1(double val);
   void actLambdaX(double val);
   void actLambdaY(double val);
   void lambdaReset();
-  double ecuacionRectaX();
-  double ecuacionRectaY();
   int cambiarOrigen();
   void calcularNuevaPosicion(Punto *posActual);
   double normalizarD(double desplazamiento);
   void ecuacionRecta(Punto *posActual);
-  void calcularPendiente();
   double getVelocidad();
   int getNumPuntos();
   void calcularTrayectoria(Punto *p);
@@ -136,156 +136,129 @@ class Trayectoria
 class Objeto
 {
  public:
-  enum tipoObjeto tipo;
-  int vida;
+  Punto ubicacion;
+  char *archivoMaya;
+  vector<Vertice> maya;
 
   Objeto()
     {
-      tipo = NODEF;
-      vida = 3;
+      ubicacion = Punto();
+      archivoMaya = NULL;
     }
 
-  Objeto(enum tipoObjeto t, int v) 
+  Objeto(Punto v, char *am) 
     {
-      tipo = t;
-      vida = v;
+      ubicacion = v;
+      archivoMaya = am;
+      maya = vector<Vertice>();
     }
 
-  virtual void Print();
-  virtual void dibujarEsfera();
-  virtual void dibujarCubo();
-  virtual void dibujarMaya();
-  void decVida();
-};
-
-class ObjetoMaya: public Objeto
-{
- public:
-  char *rutaArchivo;
-  Punto p;
-
- ObjetoMaya() : Objeto(), rutaArchivo(NULL), p(Punto()) {}
-
- ObjetoMaya(enum tipoObjeto t, int vidas, char *nArchivo, 
-             Punto x) : Objeto(t,vidas), rutaArchivo(nArchivo),
-    p(x) {}
-
-  ~ObjetoMaya() {free(rutaArchivo);}
-
-  virtual void Print();
-  void dibujarMaya();
-};
-
-class ObjetoCubo: public Objeto
-{
- public:
-  int tamano;
-  Punto p;
-  
- ObjetoCubo() : Objeto(), tamano(0), p(Punto()) {}
-
- ObjetoCubo(enum tipoObjeto t, int vidas, int tam, Punto x) :
-  Objeto(t,vidas), tamano(tam), p(x) {}
-
-  virtual void Print();
-  void dibujarCubo();
-};
-
-class ObjetoEsfera: public Objeto
-{
- public:
-  Punto p;
-  double radio;
-
- ObjetoEsfera() : Objeto(), p(Punto()), radio(0.0) {}
- 
- ObjetoEsfera(enum tipoObjeto t, int vidas, Punto pto, double rad) :
-  Objeto(t,vidas), p(pto), radio(rad) {}
-
-  virtual void Print();
-  void dibujarEsfera();
+  void Print();
+  void dibujarObjeto();
 };
 
 class Jugador
 {
  public:
-  double disparo;
-  Trayectoria t;
-  Punto posActual;
+  int vidas;
+  double velocidad;
+  int turbo;
+  double velocidadTurbo;
+  char * archivoMaya;
+  vector<Vertice> maya;
+  Punto ubicacionActual;
 
   Jugador() 
     {
-      disparo = 0.0;
-      t = Trayectoria();
-      posActual = Punto();
+      vidas = 3;
+      velocidad = 0.0;
+      turbo = 0;
+      velocidadTurbo = 0.0;
+      archivoMaya = NULL;
+      maya = vector<Vertice>();
+      ubicacionActual = Punto();
     }
 
-  Jugador(double d, Trayectoria tr, Punto ini)
+  Jugador(int v, double vl, int t, double vlt, char *am, 
+          vector<Vertice> vv)
     {
-      disparo = d;
-      t = tr;
-      posActual = ini;
+      vidas = v;
+      velocidad = vl;
+      turbo = t;
+      velocidadTurbo = vlt;
+      archivoMaya = am;
+      maya = vv;
+      ubicacionActual = Punto();
     }
 
   void Print();
-
   void dibujarJugador();
-  void dibujarTrayectoriaJ();
+};
+
+class Contrincante {
+ public:
+  Trayectoria t;
+  char* maya;
+
+  Contrincante() {
+    t = Trayectoria();
+    maya = NULL;
+  }
+
+  Contrincante(Trayectoria tr, char* mya) {
+    t = tr;
+    maya = mya;
+  }
+
+  void Print();
 };
 
 class Nivel
 {
  public:
   int id;
-  int tiempo;
+  int vidas;
+  Tablero t;
+  Punto salida;
+  char *terrenoBN;
   Jugador j;
   int numContrincantes;
-  vector<Jugador> listaContrincantes;
+  vector<Contrincante> listaContrincantes;
   int numObjetos;
-  vector<Objeto*> listaObjetos;
-  vector<Disco> listaDiscos;
-  Punto limitesJuego;
+  vector<Objeto> listaObjetos;
 
   Nivel() 
     {
       id = 0;
-      tiempo = 0;
+      vidas = 0;
+      t = Tablero();
+      salida = Punto();
+      terrenoBN = NULL;
       j = Jugador();
       numContrincantes = 0;
-      listaContrincantes = vector<Jugador>();
+      listaContrincantes = vector<Contrincante>();
       numObjetos = 0;
-      listaObjetos = vector<Objeto*>();
-      listaDiscos = vector<Disco>(numContrincantes + 1, Disco());
-      limitesJuego = Punto();
+      listaObjetos = vector<Objeto>();
     }
   
-  Nivel(int ident, int t, Jugador jug, int nContr,
-        vector<Jugador> listContr, int nObjetos,
-        vector<Objeto*> listObj)
+  Nivel(int ident, int vd, Tablero tab, Punto sal, char * tBN, 
+        Jugador jug, int nContr, vector<Contrincante> listContr, 
+        int nObjetos, vector<Objeto> listObj)
     {
       id = ident;
-      tiempo = t;
+      vidas = vd;
+      t = tab;
+      salida = sal;
+      terrenoBN = tBN;
       j = jug;
       numContrincantes = nContr;
       listaContrincantes = listContr;
       numObjetos = nObjetos;
       listaObjetos = listObj;
-      limitesJuego = Punto();
-      // Inicializar los discos
-      // Jugador 
-      listaDiscos.push_back(Disco(j.posActual));
-      // Contrincantes
-      for(int i = 0; i < numContrincantes; i++) 
-        {
-          listaDiscos.push_back(Disco(listaContrincantes[i].posActual));
-        }
     }
 
   void dibujarTrayectoriaC();
-  void dibujarJugadores();
   void dibujarObstaculos();
-  void dibujarDiscos();
-  void setLimite(double x, double y);
   void Print();
 };
 
@@ -306,7 +279,6 @@ class Juego
       numNiveles = nNiveles;
       listaNiveles = lstNivel;
     }
-
   void Print();
 };
 
