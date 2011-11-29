@@ -17,24 +17,19 @@ using namespace std;
 
 /* INICIO Variables globales */
 Juego j;
-float tamX = 100.0;
-float tamY = 100.0;
-float tamZ = 2.0;
+float tamX;
+float tamY;
+float tamZ;
 float giroH = 0;
 float giroV = 0;
-int mouVenX = 0;
-int mouVenY = 0;
-double mouJueX = tamX/2;
-double mouJueY = tamY/2;
-double mouJueZ = 1;
 int nivelActual = 0;
 Punto posActualJugador;
 vector<Punto> posContrincante;
 double incr = 0.001;
-GLfloat ambiente[] = { 0.01*tamX, 0.02*tamY, 0.02, 1.0 };
-GLfloat difusa[] = { 0.05*tamX, 0.05*tamY, 0.05, 1.0 };
-GLfloat especular[] = { 0.08*tamX, 0.08*tamY, 0.08, 1.0 };
-GLfloat posicion[] = { 0.5*tamX,0.5*tamY,0.3,0.0};
+GLfloat ambiente[4];
+GLfloat difusa[4];
+GLfloat especular[4];
+GLfloat posicion[4];
 
 static GLuint texName;
 int iheight, iwidth;
@@ -72,7 +67,6 @@ display(void)
   glRotatef(rot, 0.0,0.0,1.0);
 
   /* Tablero */
-  dibujarMira(mouJueX,mouJueY,1.0,0.0,0.0);
 
   glEnable(GL_TEXTURE_2D);
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -120,29 +114,7 @@ reshape (int w, int h)
   glEnable(GL_LIGHT0);
 }
 
-void
-proyectarMouse(int x, int y)
-{
-  GLint viewport[4];
-  GLdouble modelview[16];
-  GLdouble projection[16];
-  GLfloat winX, winY, winZ;
-  GLdouble posX, posY, posZ;
-  glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
-  glGetDoublev( GL_PROJECTION_MATRIX, projection );
-  glGetIntegerv( GL_VIEWPORT, viewport );
-  winX = (float)x;
-  winY = (float)viewport[3] - (float)y;
-  glReadPixels( x, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
-  gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
-  mouJueX = posX;
-  mouJueY = posY;
-  mouJueZ = posZ;
-}
-
-void
-flechas(int key, int x, int y)
-{
+void flechas(int key, int x, int y) {
   float tmpMax = 10.0;
   float tmpMov = 0.1;
   switch(key) {
@@ -157,34 +129,6 @@ flechas(int key, int x, int y)
     break;
   case GLUT_KEY_UP:
       giroV += 2.0;
-    break;
-  }
-  mouVenX = x;
-  mouVenY = y;
-  proyectarMouse(x,y);
-}
-
-void
-moverMouse(int x, int y)
-{
-  mouVenX = x;
-  mouVenY = y;
-  proyectarMouse(x,y);
-  //  printf("(%d,%d)\n",x,y);
-}
-
-void
-accionMouse(int key, int state, int x, int y)
-{
-  int i = 0;
-  switch(key) {
-  case GLUT_LEFT_BUTTON:
-    switch(state){
-    case GLUT_UP:
-      proyectarMouse(x,y);
-      //      printf("Dispare en (%d,%d)\n",x,y);
-      break;
-    }
     break;
   }
 }
@@ -350,12 +294,31 @@ static void init(void) {
   return;
 }
 
+void initLuz() {
+  ambiente = { 0.01*tamX, 0.02*tamY, 0.02, 1.0 };
+  difusa = { 0.05*tamX, 0.05*tamY, 0.05, 1.0 };
+  especular = { 0.08*tamX, 0.08*tamY, 0.08, 1.0 };
+}
+
+void initPosicion() {
+  posicion = { 0.5*tamX,0.5*tamY,0.3,0.0};
+}
+
+void initTamTablero(Juego j, int nivelActual) {
+  tamX = j.listaNiveles[nivelActual].t.getAncho();
+  tamY = j.listaNiveles[nivelActual].t.getLargo();
+  tamZ = 2.0;
+}
+
 
 int main (int argc, char **argv) {
   /* Abrir archivo e inicializar estructuras de juego */
   char *archivo = argv[1];
   j = parse(archivo);
-  j.Print();
+  
+  initTamTablero(j, nivelActual);
+  initLuz();
+  initPosicion();
 
   /* Inicialización de ventana */
   glutInit(&argc, argv);
@@ -395,9 +358,6 @@ int main (int argc, char **argv) {
   glutReshapeFunc(reshape);
   glutDisplayFunc(display);
   glutSpecialFunc(flechas);
-  glutMouseFunc(accionMouse);
-  glutMotionFunc(moverMouse);
-  glutPassiveMotionFunc(moverMouse);
   glutKeyboardFunc(keyboard);
   glutMainLoop();
 
