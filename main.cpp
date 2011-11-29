@@ -54,9 +54,7 @@ GLuint tablero;
 
 /* FIN Variables globales */
 
-void
-display(void)
-{
+void display(void) {
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
   /* Coordenad=as del sistema */
@@ -99,9 +97,7 @@ display(void)
   return;
 }
 
-void
-reshape (int w, int h)
-{
+void reshape (int w, int h) {
   float aspectratio;
   aspectratio = (float) w / (float) h;
   glViewport (0, 0, (GLsizei) w, (GLsizei) h);
@@ -133,13 +129,11 @@ void flechas(int key, int x, int y) {
   }
 }
 
-void teclaPausa()
-{
+void teclaPausa() {
   sleep(5);
 }
 
-void teclaZoomIn()
-{
+void teclaZoomIn() {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   zoom -= ZOOM_FACTOR;
@@ -147,8 +141,7 @@ void teclaZoomIn()
   glMatrixMode(GL_MODELVIEW);
 }
 
-void teclaZoomOut()
-{
+void teclaZoomOut() {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   zoom += ZOOM_FACTOR;
@@ -156,49 +149,39 @@ void teclaZoomOut()
   glMatrixMode(GL_MODELVIEW);
 }
 
-void teclaCamUp()
-{
+void teclaCamUp() {
   camUpDown -= 0.5;
 }
 
-void teclaCamDown()
-{
+void teclaCamDown() {
   camUpDown += 0.5;
 }
 
-void teclaRotIzq()
-{
+void teclaRotIzq() {
   rot -= 3.0;
 }
 
-void teclaRotDer()
-{
+void teclaRotDer() {
   rot += 3.0;
 }
 
-void teclaTrasXIzq()
-{
+void teclaTrasXIzq() {
   avanceX += 0.5; 
 }
 
-void teclaTrasXDer()
-{
+void teclaTrasXDer() {
   avanceX -= 0.5;
 }
 
-void teclaTrasYDer()
-{
+void teclaTrasYDer() {
   avanceY -= 0.5;
 }
 
-void teclaTrasYIzq()
-{
+void teclaTrasYIzq() {
   avanceY += 0.5;
 }
 
-void
-keyboard (unsigned char key, int x, int y) 
-{
+void keyboard (unsigned char key, int x, int y)  {
   switch (key)
     {
     case 'P': case 'p':
@@ -242,8 +225,7 @@ keyboard (unsigned char key, int x, int y)
   return;
 }
 
-void
-textureInit(){
+void textureInit(){
    glClearColor (0.0, 0.0, 0.0, 0.0);
    glShadeModel(GL_SMOOTH);
    glEnable(GL_DEPTH_TEST);
@@ -326,19 +308,11 @@ int main (int argc, char **argv) {
   glutInitWindowSize (1280,800);
   glutInitWindowPosition (100, 150);
 
-  // /* Cargar figura .ply */
+  /* Cargar figura .ply */
 
-  // const char *filename = argv[2];
-  // TriMesh *themesh = TriMesh::read(filename);
-  // // if (!themesh)
-  // //   usage(argv[0]);
-  // themesh->need_normals();
-  // themesh->need_tstrips();
-  // themesh->need_bsphere();
-  // meshes.push_back(themesh);
-  // xforms.push_back(xform());
-  // visible.push_back(true);
-  // filenames.push_back(filename);
+  const char *filename = argv[2];
+  TriMesh *themesh = TriMesh::read(filename);
+  themesh->need_faces();
 
   glutCreateWindow (argv[0]);
   /* Propiedades de openGL */
