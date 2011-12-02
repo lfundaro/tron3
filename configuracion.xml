@@ -10,8 +10,8 @@
       3
     </vidas>
     <tablero>
-      <ancho> 100 </ancho>
-      <largo> 100 </largo>
+      <ancho> 20 </ancho>
+      <largo> 20 </largo>
     </tablero>
     <salida>
       <punto>
@@ -21,7 +21,7 @@
     <terrenoBN>
       <textura>
         <archivo> 
-          "./texturas/fractal.bmp"
+          ./texturas/fractal.bmp
         </archivo> 
       </textura>
     </terrenoBN>   
@@ -37,7 +37,7 @@
 	</velocidadTurbo>
         <maya>
           <archivo>
-            "./modelos/Tron/Main Objects/LightCycle_Player.obj"
+            ./modelos/Tron/Main Objects/LightCycle_Player.obj
           </archivo>
         </maya>
     </jugador>
@@ -61,7 +61,7 @@
       </trayectoria>
       <maya>
         <archivo>
-          "./modelos/Tron/Main Objects/LightCycle_Enemy.obj"
+          ./modelos/Tron/Main Objects/LightCycle_Enemy.obj
         </archivo>
       </maya>
     </contrincante>    
@@ -79,7 +79,7 @@
       </trayectoria>
       <maya>
         <archivo>
-          "./modelos/Tron/Main Objects/LightCycle_Enemy.obj"
+          ./modelos/Tron/Main Objects/LightCycle_Enemy.obj
         </archivo>
       </maya>
     </contrincante>    
@@ -90,7 +90,7 @@
       <objeto>
         <maya>
           <archivo>
-            "./modelos/snail.ply"
+            ./modelos/snail.ply
           </archivo>
           <x>
             60
@@ -103,7 +103,7 @@
       <objeto>
         <maya>
           <archivo>
-            "./modelos/golfball.ply"
+            ./modelos/golfball.ply
           </archivo>
           <x>
             20
@@ -116,7 +116,7 @@
       <objeto>
         <maya>
           <archivo>
-            "./modelos/Man.ply"
+            ./modelos/Man.ply
           </archivo>
           <x>
             20

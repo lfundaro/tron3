@@ -3,8 +3,8 @@
 #include <GL/glut.h>
 #include <vector>
 #include "include/TriMesh.h"
-#include "include/Vec.h"
-#include "include/Color.h"
+//#include "include/Vec.h"
+//#include "include/Color.h"
 
 using namespace std;
 
@@ -41,7 +41,8 @@ void display(void) {
   glLoadIdentity();
 
   //  glColor3f(1.0,0.0,0.0);
-  //  glTranslatef(0.0,0.0,-maximo*2);
+  glTranslatef(0.0,0.0,-maximo*2);
+  glRotatef(90.0,1.0,0.0,0.0);
   //  glutSolidCube(1.0);
  
   drawMesh();

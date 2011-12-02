@@ -12,3 +12,9 @@ tinyxml
 config2.xml
 *.bkp
 test
+nbproject
+heightmap.cpp
+innovation3d-0.66.1/
+innovation3d_0.66.1.orig.tar.gz/
+player.obj
+innovation3d_0.66.1.orig.tar.gz
