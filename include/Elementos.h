@@ -1,15 +1,16 @@
+#ifndef ELEMENTOS_H
+#define ELEMENTOS_H
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
 
-void
-dibujarBase(float x, float y);
+void dibujarBase(float x, float y);
 
-void
-dibujarTablero(float x,float y, float z);
+void dibujarTablero(float x,float y, float z);
 
-void
-dibujarMira(double x, double y, float r, float g, float b);
+void dibujarMira(double x, double y, float r, float g, float b);
 
-void
-dibujarParedes(float x,float y, float z);
+void dibujarParedes(float x,float y, float z);
+
+#endif

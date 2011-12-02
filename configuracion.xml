@@ -29,6 +29,11 @@
 	<velocidad>
 	  2 
 	</velocidad>
+    <posInicial>
+      <punto>
+        <x>10</x> <y>0</y>
+      </punto>
+    </posInicial>
 	<turbo>
 	  4
 	</turbo>
@@ -53,10 +58,10 @@
           2
         </puntos>
         <punto>
-          <x> 40 </x> <y> 20 </y>
+          <x>2</x> <y>5</y>
         </punto>
         <punto>
-          <x> 80 </x> <y> 20 </y>
+          <x>5</x> <y>15</y>
         </punto>
       </trayectoria>
       <maya>
@@ -74,7 +79,7 @@
           1
         </puntos>
         <punto>
-          <x> 80 </x> <y> 50 </y>
+          <x>15</x> <y>10</y>
         </punto>
       </trayectoria>
       <maya>
@@ -116,7 +121,7 @@
       <objeto>
         <maya>
           <archivo>
-            ./modelos/Man.ply
+            ./modelos/bunny.ply
           </archivo>
           <x>
             20

@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include <math.h>
 
-void 
-dibujarLinea(float x, float y,float maxX, float maxY) 
-{
+void  dibujarLinea(float x, float y,float maxX, 
+                   float maxY) {
   glPushMatrix();
   glLineWidth(1);
   glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
@@ -21,9 +20,7 @@ dibujarLinea(float x, float y,float maxX, float maxY)
   glPopMatrix();
 }
 
-void 
-dibujarLineas(float x, float y)
-{
+void dibujarLineas(float x, float y) {
   int i = 0;
   glColor3f(0.0,1.0,1.0);
   for (i =1; i < x+1; i++){
@@ -35,8 +32,7 @@ dibujarLineas(float x, float y)
   }
 }
 
-void
-dibujarBorde(float x, float y){
+void dibujarBorde(float x, float y){
   glLineWidth(2);
   glColor3f(0.0,0.0,0.0);
   glPushMatrix();
@@ -65,9 +61,7 @@ dibujarBorde(float x, float y){
   glPopMatrix();
 }
 
-void
-dibujarBase(float x, float y)
-{
+void dibujarBase(float x, float y) {
   glPushMatrix();
   glBegin(GL_QUADS);
   glNormal3f(0.0,1.0,0.0);
@@ -79,9 +73,7 @@ dibujarBase(float x, float y)
   glPopMatrix();
 }
 
-void
-dibujarContorno(float x, float y)
-{
+void dibujarContorno(float x, float y) {
   glPushMatrix();
   glColor3f(0.0,1.0,1.0);
   glTranslatef((x)/2,(y)/2,-0.51);
@@ -90,9 +82,7 @@ dibujarContorno(float x, float y)
   glPopMatrix();
 }
 
-void
-dibujarColumnas(float x, float y, float z)
-{
+void dibujarColumnas(float x, float y, float z) {
   float r = 0.6;
   float g = 0.6;
   float b = 0.6;
@@ -134,8 +124,7 @@ dibujarColumnas(float x, float y, float z)
   glPopMatrix();
 }
 
-void
-dibujarParedes(float x,float y, float z){
+void dibujarParedes(float x,float y, float z){
   float r = 0.0;
   float g = 5.0;
   float b = 5.0;
@@ -223,17 +212,14 @@ dibujarParedes(float x,float y, float z){
   */
 }
 
-void
-dibujarTablero(float x,float y, float z)
-{
+void dibujarTablero(float x,float y, float z) {
   dibujarBorde(x,y);
   dibujarContorno(x,y);
   dibujarColumnas(x,y,z);
 }
 
-void
-dibujarMira(double x, double y, float r, float g, float b)
-{
+void dibujarMira(double x, double y, 
+                 float r, float g, float b) {
   glPushMatrix();
   glColor3f(r,g,b);
   glLineWidth(5);

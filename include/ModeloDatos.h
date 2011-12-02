@@ -9,6 +9,7 @@
 #include <GL/glut.h>
 #include <math.h>
 #include <time.h>
+#include "TriMesh.h"
 
 #define RAD_INT_TORUS 1.0
 #define RAD_EXT_TORUS 2.0
@@ -42,23 +43,26 @@ class Punto
   void Print();
 };
 
-class Vertice {
-  double x;
-  double y;
-  double z; 
+class Coeficientes {
+ public:
+  double cX;
+  double cY;
+  double cZ; 
 
-  Vertice() {
-    x = 0.0;
-    y = 0.0;
-    z = 0.0;
+  Coeficientes() {
+    cX = 0.0;
+    cY = 0.0;
+    cZ = 0.0;
   }
 
-  Vertice(double a, double b, double c) {
-    x = a;
-    y = b;
-    z = c;
+  Coeficientes(double a, double b, double c) {
+    cX = a;
+    cY = b;
+    cZ = c;
   }
 };
+
+Coeficientes coeficientesMaya(TriMesh *themesh);
 
 class Tablero {
  public:
@@ -133,12 +137,14 @@ class Trayectoria
   void Print();
 };
 
+//void coeficientesMaya(TriMesh *themesh);
+
 class Objeto
 {
  public:
   Punto ubicacion;
   char *archivoMaya;
-  vector<Vertice> maya;
+  TriMesh *themesh;
 
   Objeto()
     {
@@ -150,7 +156,11 @@ class Objeto
     {
       ubicacion = v;
       archivoMaya = am;
-      maya = vector<Vertice>();
+      
+      // Cargar maya
+      const char *filename = archivoMaya;
+      themesh = TriMesh::read(filename);
+      themesh->need_faces();
     }
 
   void Print();
@@ -165,7 +175,8 @@ class Jugador
   int turbo;
   double velocidadTurbo;
   char * archivoMaya;
-  vector<Vertice> maya;
+  TriMesh *themesh;
+  Coeficientes cf;
   Punto ubicacionActual;
 
   Jugador() 
@@ -175,20 +186,23 @@ class Jugador
       turbo = 0;
       velocidadTurbo = 0.0;
       archivoMaya = NULL;
-      maya = vector<Vertice>();
       ubicacionActual = Punto();
+      cf = Coeficientes();
     }
 
-  Jugador(int v, double vl, int t, double vlt, char *am, 
-          vector<Vertice> vv)
+  Jugador(int v, double vl, int t, double vlt, char *am, Punto pI)
     {
       vidas = v;
       velocidad = vl;
       turbo = t;
       velocidadTurbo = vlt;
       archivoMaya = am;
-      maya = vv;
-      ubicacionActual = Punto();
+      ubicacionActual = pI;
+
+      // Cargar maya
+      const char *filename = archivoMaya;
+      themesh = TriMesh::read(filename);
+      themesh->need_faces();
     }
 
   void Print();
@@ -198,19 +212,33 @@ class Jugador
 class Contrincante {
  public:
   Trayectoria t;
+  Punto ubicacionActual;
   char* maya;
+  TriMesh *themesh;
+  Coeficientes cf;
 
   Contrincante() {
     t = Trayectoria();
+    ubicacionActual = Punto();
     maya = NULL;
+    cf = Coeficientes();
   }
 
   Contrincante(Trayectoria tr, char* mya) {
     t = tr;
     maya = mya;
+    ubicacionActual = Punto(t.listaPuntos[0].getX(), 
+                            t.listaPuntos[0].getY());
+    
+    // Cargar maya
+    const char *filename = maya;
+    themesh = TriMesh::read(filename);
+    themesh->need_faces();
+    cout << "Maya Contrincante = " << maya << endl;
   }
-
   void Print();
+  void dibujarTrayectoriaC();
+  void dibujarContrincante();
 };
 
 class Nivel
@@ -257,7 +285,8 @@ class Nivel
       listaObjetos = listObj;
     }
 
-  void dibujarTrayectoriaC();
+  void dibujarTrayectoriaContrincantes();
+  void dibujarJugadores();
   void dibujarObstaculos();
   void Print();
 };

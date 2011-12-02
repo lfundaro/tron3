@@ -45,7 +45,6 @@ GLfloat camUpDown = 0.0;
 GLfloat rot = 0.0;
 GLfloat avanceX = 0.0;
 GLfloat avanceY = 0.0;
-TriMesh *themesh;
 float maximoX = 0.0;
 float maximoY = 0.0;
 float maximoZ = 0.0;
@@ -64,28 +63,6 @@ GLuint meshJugador;
 
 /* FIN Variables globales */
 
-void drawMesh() {
-  int i1;
-  int i2;
-  int i3;
-  glColor3f(1.0,0.0,0.0);
-  glRotatef(-90.0,0.0,0.0,1.0);
-  glBegin(GL_TRIANGLES);
-  for(vector<TriMesh::Face>::iterator it = themesh->faces.begin();
-      it != themesh->faces.end();
-      ++it) {
-    i1 = (*it)[0];
-    i2 = (*it)[1];
-    i3 = (*it)[2];
-    glVertex3f(themesh->vertices[i1][0]*cX,themesh->vertices[i1][1]*cY,
-               themesh->vertices[i1][2]*cZ);
-    glVertex3f(themesh->vertices[i2][0]*cX, themesh->vertices[i2][1]*cY,
-               themesh->vertices[i2][2]*cZ);
-    glVertex3f(themesh->vertices[i3][0]*cX, themesh->vertices[i3][1]*cY,
-               themesh->vertices[i3][2]*cZ);
-  }
-  glEnd();
-}
 
 void display(void) {
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -117,15 +94,15 @@ void display(void) {
 
   glPushMatrix();
   glScalef(0.2,0.2,0.2);
-  glTranslatef(despJugX, despJugY,-maximoZ + 60);
-  glCallList(meshJugador);
+  glTranslatef(despJugX, despJugY,0.0);
+  //  glCallList(meshJugador);
   glPopMatrix();
  
   // Dibujar trayectoria de Jugador
   //  j.listaNiveles[nivelActual].j.dibujarTrayectoriaJ();
-  //  j.listaNiveles[nivelActual].dibujarTrayectoriaC();
+  j.listaNiveles[nivelActual].dibujarTrayectoriaContrincantes();
   // Dibujar jugadores en posición inicial
-  //  j.listaNiveles[nivelActual].dibujarJugadores();
+  j.listaNiveles[nivelActual].dibujarJugadores();
   // Dibujar obstáculos
   //  j.listaNiveles[nivelActual].dibujarObstaculos();
   // Dibujar discos
@@ -334,11 +311,11 @@ static void init(void) {
   glNewList(paredes, GL_COMPILE);
   dibujarTablero(tamX,tamY,tamZ);
   glEndList();
-  // mesh Jugador
-  meshJugador = glGenLists(1);
-  glNewList(meshJugador, GL_COMPILE);
-  drawMesh();
-  glEndList();
+  // // mesh Jugador
+  // meshJugador = glGenLists(1);
+  // glNewList(meshJugador, GL_COMPILE);
+  // //  drawMesh();
+  // glEndList();
   return;
 }
 
@@ -350,42 +327,14 @@ void initLuz() {
 
 void initPosicion() {
   posicion = {0.5*tamX,0.5*tamY,0.3,0.0};
+  // despJugX = j.listaNiveles[nivelActual].j.posInicial.getX()*5.0;
+  // despJugY = j.listaNiveles[nivelActual].j.posInicial.getY() + 6;
 }
 
 void initTamTablero(Juego j, int nivelActual) {
   tamX = j.listaNiveles[nivelActual].t.getAncho();
   tamY = j.listaNiveles[nivelActual].t.getLargo();
   tamZ = 2.0;
-}
-
-void initNivel() {
-  /* Cargar figura .ply */
-  const char *filename = j.listaNiveles[nivelActual].j.archivoMaya;
-  themesh = TriMesh::read(filename);
-  themesh->need_faces();
-}
-
-void coeficientesMaya() {
-  int i1;
-  int i2;
-  int i3;
-  for(vector<TriMesh::Face>::iterator it = themesh->faces.begin();
-      it != themesh->faces.end();
-      ++it) {
-    i1 = (*it)[0];
-    i2 = (*it)[1];
-    i3 = (*it)[2];
-    maximoX = max(max(max(themesh->vertices[i1][0], themesh->vertices[i2][0]), 
-            themesh->vertices[i3][0]), maximoX);
-    maximoY = max(max(max(themesh->vertices[i1][1], themesh->vertices[i2][1]), 
-            themesh->vertices[i3][1]), maximoZ);
-    maximoZ = max(max(max(themesh->vertices[i1][2], themesh->vertices[i2][2]), 
-            themesh->vertices[i3][2]), maximoZ);
-  }
-  
-  cX = 5.0 / maximoX;
-  cY = 5.0 / maximoY;
-  cZ = 5.0 / maximoZ;
 }
 
 int main (int argc, char **argv) {
@@ -402,11 +351,6 @@ int main (int argc, char **argv) {
   glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB |  GLUT_DEPTH);
   glutInitWindowSize (1280,800);
   glutInitWindowPosition (100, 150);
-
-  // Cargar Nivel
-  initNivel();
-  // Redimensionar maya
-  coeficientesMaya();
 
   glutCreateWindow (argv[0]);
   /* Propiedades de openGL */

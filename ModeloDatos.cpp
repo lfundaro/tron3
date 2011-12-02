@@ -112,16 +112,128 @@ void Trayectoria::lambdaReset()
   return;
 }
 
-void Trayectoria::calcularTrayectoria(Punto *posActual) 
+void Trayectoria::calcularTrayectoria(Punto *posActual)
 {
   if (cambiarOrigen()) {lambdaReset();}
   calcularNuevaPosicion(posActual);
   return;
 }
 
-void Jugador::dibujarJugador() 
-{
+void drawMesh(TriMesh *themesh, Coeficientes cf) {
+  int i1;
+  int i2;
+  int i3;
+  glColor3f(1.0,0.0,0.0);
+  glRotatef(-90.0,0.0,0.0,1.0);
+  glBegin(GL_TRIANGLES);
+  for(vector<TriMesh::Face>::iterator it = themesh->faces.begin();
+      it != themesh->faces.end();
+      ++it) {
+    i1 = (*it)[0];
+    i2 = (*it)[1];
+    i3 = (*it)[2];
+    glVertex3f(themesh->vertices[i1][0]*cf.cX,themesh->vertices[i1][1]*cf.cY,
+               themesh->vertices[i1][2]*cf.cZ);
+    glVertex3f(themesh->vertices[i2][0]*cf.cX, themesh->vertices[i2][1]*cf.cY,
+               themesh->vertices[i2][2]*cf.cZ);
+    glVertex3f(themesh->vertices[i3][0]*cf.cX, themesh->vertices[i3][1]*cf.cY,
+               themesh->vertices[i3][2]*cf.cZ);
+
+    // glVertex3f(themesh->vertices[i1][0],themesh->vertices[i1][1],
+    //            themesh->vertices[i1][2]);
+    // glVertex3f(themesh->vertices[i2][0], themesh->vertices[i2][1],
+    //            themesh->vertices[i2][2]);
+    // glVertex3f(themesh->vertices[i3][0], themesh->vertices[i3][1],
+    //            themesh->vertices[i3][2]);
+
+  }
+  //  cout << cf.cX << " " << cf.cY << " " << cf.cY << endl;
+  glEnd();
+}
+
+Coeficientes coeficientesMaya(TriMesh *themesh) {
+  int i1;
+  int i2;
+  int i3;
+  float maximoX;
+  float maximoY;
+  float maximoZ;
+  maximoX = 0.0; 
+  maximoY = 0.0;
+  maximoZ = 0.0;
+  for(vector<TriMesh::Face>::iterator it = themesh->faces.begin();
+      it != themesh->faces.end();
+      ++it) {
+    i1 = (*it)[0];
+    i2 = (*it)[1];
+    i3 = (*it)[2];
+    maximoX = max(max(max(themesh->vertices[i1][0], themesh->vertices[i2][0]),
+            themesh->vertices[i3][0]), maximoX);
+    maximoY = max(max(max(themesh->vertices[i1][1], themesh->vertices[i2][1]),
+            themesh->vertices[i3][1]), maximoZ);
+    maximoZ = max(max(max(themesh->vertices[i1][2], themesh->vertices[i2][2]),
+            themesh->vertices[i3][2]), maximoZ);
+  }
+  
+  double cX = 5.0 / maximoX;
+  double cY = 5.0 / maximoY;
+  double cZ = 5.0 / maximoZ;
+  Coeficientes c = Coeficientes(cX, cY, cZ);
+  return c;
+}
+
+void Jugador::dibujarJugador() {
+  glPushMatrix();
+  //  glColor3f(0.2,0.9,0.5);
+  // Punto de origen -- Punto destino ?
+  //  t.calcularTrayectoria(&posActual);
+  //  glColor3f(1.0,0.0,0.0);
+  //  glTranslatef(ubicacionActual.getX(), ubicacionActual.getY(), 0.0);
+  //glScalef(cf.cX,cf.cY,cf.cZ);
+  //  cout << "PosInicialX = " << posInicial.getX()*5.0 << endl;
+  //  cout << "PosInicialY = " << posInicial.getY() << endl;
+  glScalef(0.2,0.2,0.2);
+  //  glTranslatef(ubicacionActual.getX()*5.0, ubicacionActual.getY()*5.0 + 6,0.0);
+  glTranslatef(ubicacionActual.getX(), ubicacionActual.getY(),0.0);
+  //  glScalef(0.2,0.2,0.2);
+  drawMesh(themesh, cf);
+  //  cout << cf.cX << " " << cf.cY << " " << cf.cY << endl;
+  glPopMatrix();
   return;
+}
+
+void Contrincante::dibujarContrincante() {
+  glPushMatrix();
+  glColor3f(0.2,0.9,0.5);
+  // Jugador con un sólo punto en la trayectoria
+  if (t.numPuntos == 1) 
+    {
+      glScalef(0.2,0.2,0.2);
+      //      glTranslatef(ubicacionActual.getX()*5.0, ubicacionActual.getY()*5.0+6.0, 0.0);
+      glTranslatef(ubicacionActual.getX(), ubicacionActual.getY(), 0.0);
+      drawMesh(themesh,cf);
+    }
+  else  // Múltiples puntos
+    {
+      // Punto de origen -- Punto destino ?
+      t.calcularTrayectoria(&ubicacionActual);
+      glColor3f(1.0,0.0,0.0);
+      glTranslatef(ubicacionActual.getX(), ubicacionActual.getY(), 0.0);
+      glutSolidSphere(0.5, 20.0,20.0);
+    }
+  glPopMatrix();
+  return;
+}
+
+void Nivel::dibujarJugadores()
+{
+  // Dibujamos el jugador
+  j.dibujarJugador();
+  // Dibujar contrincantes
+  for(int i = 0; i < numContrincantes; i++) 
+    {
+      listaContrincantes[i].dibujarContrincante();
+    }
 }
 
 // Dibujar objeto
@@ -139,9 +251,39 @@ void Nivel::dibujarObstaculos()
 }
 
 // Dibuja trayectoria de contrincante
-void Nivel::dibujarTrayectoriaC()
+void Contrincante::dibujarTrayectoriaC()
 {
+  if (t.numPuntos == 1) { 
+    glPushMatrix();
+    glColor3f(1.0,0.0,0.0);
+    glPointSize(20);
+    glBegin(GL_POINTS);
+    glVertex3f(t.listaPuntos[0].getX(), t.listaPuntos[0].getY(), 0.0);
+    glEnd();
+    glPopMatrix();
+  }
+  else {
+    glColor3f(1.0,0.0,0.0);
+    glPushMatrix();
+    glLineWidth(10);
+    glBegin(GL_LINE_LOOP);
+    for (int i = 0; i < t.numPuntos - 1; i++) 
+      {
+        glVertex3f(t.listaPuntos[i].getX(), t.listaPuntos[i].getY(), 0.0);
+        glVertex3f(t.listaPuntos[i+1].getX(), t.listaPuntos[i+1].getY(), 0.0);
+      }
+    glEnd();
+    glPopMatrix();
+  }
   return;
+}
+
+
+void Nivel::dibujarTrayectoriaContrincantes() {
+  for(int i = 0; i < numContrincantes; i++) 
+    {
+      listaContrincantes[i].dibujarTrayectoriaC();
+    }
 }
 
 void Punto::Print() 

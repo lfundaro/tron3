@@ -28,6 +28,8 @@ Trayectoria parseTrayectoria(TiXmlHandle rootTrayectoria)
     {
       TiXmlHandle rootPunto(nodoPunto);
       Punto pt = parsePunto(rootPunto);
+      pt.setX(pt.getX()*5.0);
+      pt.setY(pt.getY()*5.0+6.0);
       listPts.push_back(pt);
       i++;
     }
@@ -40,6 +42,11 @@ Jugador parseJugador(TiXmlHandle rootJugador, int vidas)
   // disparo
   TiXmlElement *pElem = rootJugador.FirstChild("velocidad").Element();
   double velocidad = atof(pElem->GetText());
+  pElem = rootJugador.FirstChild("posInicial").Element();
+  TiXmlHandle rootPosInicial(pElem);
+  pElem = rootPosInicial.FirstChild("punto").Element();
+  TiXmlHandle rootPunto(pElem);
+  Punto posInicial = parsePunto(rootPunto);
   pElem = rootJugador.FirstChild("turbo").Element();
   int turbo = atoi(pElem->GetText());
   pElem = rootJugador.FirstChild("velocidadTurbo").Element();
@@ -48,9 +55,9 @@ Jugador parseJugador(TiXmlHandle rootJugador, int vidas)
   TiXmlHandle rootMaya(pElem);
   pElem = rootMaya.FirstChild("archivo").Element();
   char *archivoMaya = strdup(pElem->GetText());
-  vector<Vertice> vv = vector<Vertice>();
   Jugador jug(vidas, velocidad, turbo, velocidadTurbo, archivoMaya,
-              vv);
+              posInicial);
+  jug.cf = coeficientesMaya(jug.themesh);
   return jug;
 }
 
@@ -64,6 +71,7 @@ Contrincante parseContrincante(TiXmlHandle rootContrincante)
   pElem = rootMaya.FirstChild("archivo").Element();
   char* archivoMaya = strdup(pElem->GetText());
   Contrincante ctr = Contrincante(tr, archivoMaya);
+  ctr.cf = coeficientesMaya(ctr.themesh);
   return ctr;
 }
 
