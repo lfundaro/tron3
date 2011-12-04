@@ -193,8 +193,8 @@ void Jugador::dibujarJugador() {
   //  cout << "PosInicialX = " << posInicial.getX()*5.0 << endl;
   //  cout << "PosInicialY = " << posInicial.getY() << endl;
   glScalef(0.2,0.2,0.2);
-  //  glTranslatef(ubicacionActual.getX()*5.0, ubicacionActual.getY()*5.0 + 6,0.0);
-  glTranslatef(ubicacionActual.getX(), ubicacionActual.getY(),0.0);
+  glTranslatef(ubicacionActual.getX()*5.0, ubicacionActual.getY()*5.0 + 6,0.0);
+  //glTranslatef(ubicacionActual.getX(), ubicacionActual.getY(),0.0);
   //  glScalef(0.2,0.2,0.2);
   drawMesh(themesh, cf);
   //  cout << cf.cX << " " << cf.cY << " " << cf.cY << endl;
@@ -209,8 +209,7 @@ void Contrincante::dibujarContrincante() {
   if (t.numPuntos == 1) 
     {
       glScalef(0.2,0.2,0.2);
-      //      glTranslatef(ubicacionActual.getX()*5.0, ubicacionActual.getY()*5.0+6.0, 0.0);
-      glTranslatef(ubicacionActual.getX(), ubicacionActual.getY(), 0.0);
+      glTranslatef(ubicacionActual.getX()*5.0, ubicacionActual.getY()*5.0+6.0, 0.0);
       drawMesh(themesh,cf);
     }
   else  // Múltiples puntos
@@ -218,8 +217,9 @@ void Contrincante::dibujarContrincante() {
       // Punto de origen -- Punto destino ?
       t.calcularTrayectoria(&ubicacionActual);
       glColor3f(1.0,0.0,0.0);
-      glTranslatef(ubicacionActual.getX(), ubicacionActual.getY(), 0.0);
-      glutSolidSphere(0.5, 20.0,20.0);
+      glScalef(0.2,0.2,0.2);
+      glTranslatef(ubicacionActual.getX()*5.0, ubicacionActual.getY()*5.0+6.0, 0.0);
+      drawMesh(themesh, cf);
     }
   glPopMatrix();
   return;

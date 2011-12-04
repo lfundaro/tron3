@@ -28,8 +28,6 @@ Trayectoria parseTrayectoria(TiXmlHandle rootTrayectoria)
     {
       TiXmlHandle rootPunto(nodoPunto);
       Punto pt = parsePunto(rootPunto);
-      pt.setX(pt.getX()*5.0);
-      pt.setY(pt.getY()*5.0+6.0);
       listPts.push_back(pt);
       i++;
     }
