@@ -175,6 +175,7 @@ class Jugador
   int vidas;
   double velocidad;
   enum Direccion dir;
+  int go;
   int turbo;
   double velocidadTurbo;
   char * archivoMaya;
@@ -188,6 +189,7 @@ class Jugador
       velocidad = 0.0;
       dir = ARRIBA;
       turbo = 0;
+      go = 0;
       velocidadTurbo = 0.0;
       archivoMaya = NULL;
       ubicacionActual = Punto();
@@ -200,6 +202,7 @@ class Jugador
       velocidad = vl;
       dir = ARRIBA;
       turbo = t;
+      go = 0;
       velocidadTurbo = vlt;
       archivoMaya = am;
       ubicacionActual = pI;
@@ -216,6 +219,7 @@ class Jugador
   void dirDerecha();
   void dirArriba();
   void dirAbajo();
+  void setGo();
 };
 
 class Contrincante {
@@ -223,6 +227,7 @@ class Contrincante {
   Trayectoria t;
   Punto ubicacionActual;
   char* maya;
+  int go;
   TriMesh *themesh;
   Coeficientes cf;
 
@@ -230,12 +235,14 @@ class Contrincante {
     t = Trayectoria();
     ubicacionActual = Punto();
     maya = NULL;
+    go = 0;
     cf = Coeficientes();
   }
 
   Contrincante(Trayectoria tr, char* mya) {
     t = tr;
     maya = mya;
+    go = 0;
     ubicacionActual = Punto(t.listaPuntos[0].getX(), 
                             t.listaPuntos[0].getY());
     
@@ -247,6 +254,7 @@ class Contrincante {
   }
   void Print();
   void dibujarTrayectoriaC();
+  void setGo();
   void dibujarContrincante();
 };
 
@@ -297,6 +305,7 @@ class Nivel
   void dibujarTrayectoriaContrincantes();
   void dibujarJugadores();
   void dibujarObstaculos();
+  void setGo();
   void Print();
 };
 

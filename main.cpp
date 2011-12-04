@@ -210,7 +210,8 @@ void keyboard (unsigned char key, int x, int y)  {
       teclaTrasXIzq();
       break;
     case 'G': case 'g':
-      teclaTrasXDer();
+      j.listaNiveles[nivelActual].j.setGo();
+      j.listaNiveles[nivelActual].setGo();
       break;
     case 'B': case 'b': 
       teclaTrasYIzq();
@@ -273,11 +274,6 @@ static void init(void) {
   glNewList(paredes, GL_COMPILE);
   dibujarTablero(tamX,tamY,tamZ);
   glEndList();
-  // // mesh Jugador
-  // meshJugador = glGenLists(1);
-  // glNewList(meshJugador, GL_COMPILE);
-  // //  drawMesh();
-  // glEndList();
   return;
 }
 
