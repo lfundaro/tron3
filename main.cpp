@@ -3,6 +3,9 @@
 #include <GL/gl.h>
 #include <GL/glut.h>
 #include <vector>
+#include <signal.h>
+#include <unistd.h>
+#include <sys/types.h>
 #include "include/ModeloDatos.h"
 #include "include/Camara.h"
 #include "include/Parser.h"
@@ -55,6 +58,11 @@ GLuint meshJugador;
 
 /* FIN Variables globales */
 
+/* Alarma para controlar Turbo */
+
+void  SIGALRM_control (int signum) {
+  j.listaNiveles[nivelActual].j.desactivarTurbo();
+}
 
 void display(void) {
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -219,6 +227,11 @@ void keyboard (unsigned char key, int x, int y)  {
     case 'N': case 'n':
       teclaTrasYDer();
       break;
+    case 32: // TURBO !
+      if (j.listaNiveles[nivelActual].j.getNumTurbo() > 0) {
+        j.listaNiveles[nivelActual].j.activarTurbo();
+        alarm(1);
+      }
     default:
       printf("Didnt match\n");
       break;
@@ -323,6 +336,9 @@ int main (int argc, char **argv) {
 
   /* Directivas para graficar */
   init();
+  // Binding de alarma
+  signal (SIGALRM, SIGALRM_control);
+  
   glutReshapeFunc(reshape);
   glutDisplayFunc(display);
   glutSpecialFunc(flechas);

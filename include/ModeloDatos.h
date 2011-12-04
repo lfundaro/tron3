@@ -220,6 +220,9 @@ class Jugador
   void dirArriba();
   void dirAbajo();
   void setGo();
+  void activarTurbo();
+  void desactivarTurbo();
+  int getNumTurbo();
 };
 
 class Contrincante {

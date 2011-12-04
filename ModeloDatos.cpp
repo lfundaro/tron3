@@ -192,6 +192,19 @@ void Jugador::setGo() {
   go = 1;
 }
 
+void Jugador::activarTurbo() {
+  velocidad += velocidadTurbo;
+  turbo--;
+}
+
+void Jugador::desactivarTurbo() {
+  velocidad -= velocidadTurbo;
+}
+
+int Jugador::getNumTurbo() {
+  return turbo;
+}
+
 void Nivel::setGo() {
   for(vector<Contrincante>::iterator it = listaContrincantes.begin();
       it != listaContrincantes.end(); ++it) {
