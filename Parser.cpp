@@ -8,7 +8,7 @@ Punto parsePunto(TiXmlHandle rootPunto)
   // Punto y
   pElem = rootPunto.FirstChild("y").Element();
   int y = atof(pElem->GetText());
-  Punto pto(x,y);
+  Punto pto(x,y, 0.0);
   return pto;
 }
 
@@ -96,7 +96,7 @@ vector<Objeto> parseObjetos(TiXmlHandle rootObjetos)
       // y 
       pElem = rootMaya.FirstChild("y").Element();
       int y = atoi(pElem->GetText());
-      Punto pto(x,y);
+      Punto pto(x,y,0.0);
       Objeto obj = Objeto(pto, archivo);
       obj.cf = coeficientesMayaObjetos(obj.themesh);
       listObjetos.push_back(obj);

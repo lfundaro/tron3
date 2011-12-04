@@ -14,14 +14,16 @@ int Trayectoria::getNumPuntos()
 }
 
 // Getters y setters de Punto
-double Punto::getX()
-{
+double Punto::getX() {
   return x;
 }
 
-double Punto::getY()
-{
+double Punto::getY() {
   return y;
+}
+
+double Punto::getZ() {
+  return z;
 }
 
 // Setters de punto
@@ -245,6 +247,99 @@ void Nivel::setGo() {
   }
 }
 
+void Jugador::actualizarVallas(double vel) {
+  Punto v1, v2, v3, v4;
+  Quad tmp;
+  if (cambioDir && vel >= velocidad) { 
+    switch(dir) {
+    case ARRIBA:
+      v1 = Punto(ubicacionActual.getX()*5.0,ubicacionActual.getY()*5.0+vel+6.0,1.0);
+      v2 = Punto(ubicacionActual.getX()*5.0,ubicacionActual.getY()*5.0-vel+6.0,1.0);
+      v3 = Punto(ubicacionActual.getX()*5.0+1.0,
+                 ubicacionActual.getY()*5.0-vel+6.0,1.0);
+      v4 = Punto(ubicacionActual.getX()*5.0+1.0,
+                 ubicacionActual.getY()*5.0+vel+6.0,1.0);
+      tmp = Quad(v1,v2,v3,v4);
+      estela.push_back(tmp);
+      break;
+    case ABAJO:
+      v1 = Punto(ubicacionActual.getX()*5.0, ubicacionActual.getY()*5.0-vel+6.0,1.0);
+      v2 = Punto(ubicacionActual.getX()*5.0+1,
+                 ubicacionActual.getY()*5.0-vel+6.0,1.0);
+      v3 = Punto(ubicacionActual.getX()*5.0+1, 
+                 ubicacionActual.getY()*5.0+vel+6.0,1.0);
+      v4 = Punto(ubicacionActual.getX()*5.0, 
+                 ubicacionActual.getY()*5.0+vel+6.0,1.0);
+      tmp = Quad(v1,v2,v3,v4);
+      estela.push_back(tmp);
+      break;
+    case IZQUIERDA:
+      v1 = Punto(ubicacionActual.getX()*5.0-vel,ubicacionActual.getY()*5.0+6.0,1.0);
+      v2 = Punto(ubicacionActual.getX()*5.0-vel,ubicacionActual.getY()*5.0+5.0,1.0);
+      v3 = Punto(ubicacionActual.getX()*5.0+vel,ubicacionActual.getY()*5.0+5.0,1.0);
+      v4 = Punto(ubicacionActual.getX()*5.0+vel,ubicacionActual.getY()*5.0+6.0,1.0);
+      tmp = Quad(v1,v2,v3,v4);
+      estela.push_back(tmp);
+      break;
+    case DERECHA:
+      v1 = Punto(ubicacionActual.getX()*5.0+vel,ubicacionActual.getY()*5.0+6.0,1.0);
+      v2 = Punto(ubicacionActual.getX()*5.0+vel,ubicacionActual.getY()*5.0+5.0,1.0);
+      v3 = Punto(ubicacionActual.getX()*5.0-vel,ubicacionActual.getY()*5.0+5.0,1.0);
+      v4 = Punto(ubicacionActual.getX()*5.0-vel,ubicacionActual.getY()*5.0+6.0,1.0);
+      tmp = Quad(v1,v2,v3,v4);
+      estela.push_back(tmp);
+      break;
+    }
+    cambioDir = 0;
+  }
+  else {  // Se actualiza la coordenada de la valla.
+    if (vel >= velocidad && !cambioDir) { 
+      switch(dir) {
+      case ARRIBA:
+        tmp = estela.back();
+        tmp.v1 = Punto(ubicacionActual.getX()*5.0, 
+                       ubicacionActual.getY()*5.0+vel+6.0,1.0);
+        tmp.v4 = Punto(ubicacionActual.getX()*5.0+1, 
+                       ubicacionActual.getY()*5.0+vel+6.0,1.0);
+        estela.pop_back();
+        estela.push_back(tmp);
+        break;
+      case ABAJO:
+        tmp = estela.back();
+        tmp.v1 = Punto(ubicacionActual.getX()*5.0, 
+                       ubicacionActual.getY()*5.0-vel+6.0,1.0);
+        tmp.v2 = Punto(ubicacionActual.getX()*5.0+1, 
+                       ubicacionActual.getY()*5.0-vel+6.0,1.0);
+        estela.pop_back();
+        estela.push_back(tmp);
+        break;
+      case IZQUIERDA:
+        tmp = estela.back();
+        tmp.v1 = Punto(ubicacionActual.getX()*5.0-vel,
+                       ubicacionActual.getY()*5.0+6.0,1.0);
+        tmp.v2 = Punto(ubicacionActual.getX()*5.0-vel, 
+                       ubicacionActual.getY()*5.0+5.0,1.0);
+        estela.pop_back();
+        estela.push_back(tmp);
+        break;
+      case DERECHA:
+        tmp = estela.back();
+        tmp.v1 = Punto(ubicacionActual.getX()*5.0+vel,
+                       ubicacionActual.getY()*5.0+6.0,1.0);
+        tmp.v2 =  Punto(ubicacionActual.getX()*5.0+vel, 
+                        ubicacionActual.getY()*5.0+5.0,1.0);
+        estela.pop_back();
+        estela.push_back(tmp);
+        break;
+      }
+    }
+  }
+}
+
+void Jugador::cambiarDireccion() {
+  cambioDir = 1;
+}
+
 void Jugador::dibujarJugador() {
   glPushMatrix();
   // Punto de origen -- Punto destino ?
@@ -253,22 +348,32 @@ void Jugador::dibujarJugador() {
   glScalef(0.2,0.2,0.2);
   // Actualizar desplazamiento del jugador
   // Juego paralizado ?
+  double vel;
   if (go) {
     switch (dir) {
     case ARRIBA:
-      ubicacionActual.setY(ubicacionActual.getY() + incrementarVel());
+      vel = incrementarVel();
+      actualizarVallas(vel);
+      ubicacionActual.setY(ubicacionActual.getY() + vel);
       break;
     case ABAJO:
-      ubicacionActual.setY(ubicacionActual.getY() - incrementarVel());
+      vel = incrementarVel();
+      actualizarVallas(vel);
+      ubicacionActual.setY(ubicacionActual.getY() - vel);
       break;
     case IZQUIERDA:
-      ubicacionActual.setX(ubicacionActual.getX() - incrementarVel());
+      vel = incrementarVel();
+      actualizarVallas(vel);
+      ubicacionActual.setX(ubicacionActual.getX() - vel);
       break;
     case DERECHA:
-      ubicacionActual.setX(ubicacionActual.getX() + incrementarVel());
+      vel = incrementarVel();
+      actualizarVallas(vel);
+      ubicacionActual.setX(ubicacionActual.getX() + vel);
       break;
     }
   }
+  dibujarEstela();
   glTranslatef(ubicacionActual.getX()*5.0, ubicacionActual.getY()*5.0 + 6,0.0);
   // Rotar ?
   if (go) {
@@ -352,6 +457,24 @@ void Nivel::dibujarObstaculos()
     }
 }
 
+// Dibuja la estela
+void Jugador::dibujarEstela() {
+  glPushMatrix();
+  glBegin(GL_QUADS);
+  glColor4f(0.0, 1.0/255.0,1.0/255.0,0.5);
+  for(vector<Quad>::iterator it = estela.begin();
+      it != estela.end();
+      ++it) {
+    Quad tmp = (*it);
+    glVertex3f(tmp.v1.getX(),tmp.v1.getY(),tmp.v1.getZ());
+    glVertex3f(tmp.v2.getX(),tmp.v2.getY(),tmp.v2.getZ());
+    glVertex3f(tmp.v3.getX(),tmp.v3.getY(),tmp.v3.getZ());
+    glVertex3f(tmp.v4.getX(),tmp.v4.getY(),tmp.v4.getZ());
+  }
+  glEnd();
+  glPopMatrix();
+}
+
 // Dibuja trayectoria de contrincante
 void Contrincante::dibujarTrayectoriaC()
 {
@@ -393,6 +516,7 @@ void Punto::Print()
   cout << "Punto" << endl;
   cout << "x = " << x << endl;
   cout << "y = " << y << endl;
+  cout << "z = " << z << endl;
 }
 
 void Trayectoria::Print()

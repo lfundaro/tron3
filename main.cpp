@@ -76,20 +76,20 @@ void display(void) {
 
   /* Tablero */
 
-  glEnable(GL_TEXTURE_2D);
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  //  glEnable(GL_TEXTURE_2D);
+  //  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-  glBindTexture(GL_TEXTURE_2D, texName);
+  //  glBindTexture(GL_TEXTURE_2D, texName);
   glCallList(base);
 
-  glBindTexture(GL_TEXTURE_2D, texName2);
+  //  glBindTexture(GL_TEXTURE_2D, texName2);
   glCallList(paredes);
-  glDisable(GL_TEXTURE_2D);
+  //  glDisable(GL_TEXTURE_2D);
 
-  glLightfv(GL_LIGHT0, GL_POSITION, ambiente);
-  glLightfv(GL_LIGHT0, GL_POSITION, difusa);
-  glLightfv(GL_LIGHT0, GL_POSITION, especular);
-  glLightfv(GL_LIGHT0, GL_POSITION, posicion);
+  // glLightfv(GL_LIGHT0, GL_POSITION, ambiente);
+  // glLightfv(GL_LIGHT0, GL_POSITION, difusa);
+  // glLightfv(GL_LIGHT0, GL_POSITION, especular);
+  // glLightfv(GL_LIGHT0, GL_POSITION, posicion);
   glCallList(tablero);
 
   // Dibujar trayectoria de Jugador
@@ -114,8 +114,8 @@ void reshape (int w, int h) {
   //  gluPerspective(90.0f, 1, 0.5, 100.0);
   gluPerspective(zoom, 1, 0.5, 100.0);
   glMatrixMode(GL_MODELVIEW);
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
+  //  glEnable(GL_LIGHTING);
+  //  glEnable(GL_LIGHT0);
 }
 
 void flechas(int key, int x, int y) {
@@ -135,6 +135,7 @@ void flechas(int key, int x, int y) {
     //    giroV += 2.0;
     break;
   }
+  j.listaNiveles[nivelActual].j.cambiarDireccion();
 }
 
 void teclaPausa() {
@@ -313,7 +314,7 @@ int main (int argc, char **argv) {
   j = parse(archivo);
   
   initTamTablero(j, nivelActual);
-  initLuz();
+  //  initLuz();
   initPosicion();
 
   /* Inicialización de ventana */
@@ -333,7 +334,7 @@ int main (int argc, char **argv) {
 
   glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  textureInit();
+  //  textureInit();
 
   /* Directivas para graficar */
   init();

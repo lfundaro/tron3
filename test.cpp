@@ -106,13 +106,17 @@ void display(void) {
   glLoadIdentity();
 
   //  glColor3f(1.0,0.0,0.0);
-  glTranslatef(0.0,0.0,-1.5);
-  glScalef(0.2,0.2,0.2);
-  drawMesh(themesh,cf);
+  // glTranslatef(0.0,0.0,-1.5);
+  // glScalef(0.2,0.2,0.2);
+  // drawMesh(themesh,cf);
 
-  cout << "CfX = " << cf.cX <<  endl; 
-  cout << "CfY = " << cf.cY <<  endl; 
-  cout << "CfZ = " << cf.cZ <<  endl; 
+  gluLookAt(0.0,-1.0,-1.0,-1.0,0.0,0.0,0.0,1.0,0.0);
+  // cout << "CfX = " << cf.cX <<  endl; 
+  // cout << "CfY = " << cf.cY <<  endl; 
+  // cout << "CfZ = " << cf.cZ <<  endl; 
+  
+  glColor4f(1.0,0.0,0.0,0.5);
+  glutSolidCube(1.0);
   
   //  drawMesh();
   glutSwapBuffers();
@@ -126,7 +130,7 @@ void reshape (int w, int h) {
   glViewport (0, 0, (GLsizei) w, (GLsizei) h);
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(90.0f, aspectratio, 0.5, 200.0);
+  gluPerspective(100.0f, aspectratio, 0.5, 200.0);
   glMatrixMode(GL_MODELVIEW);
 }
 
@@ -156,6 +160,8 @@ int main (int argc, char **argv) {
 
   glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable( GL_BLEND );
 
   /* Directivas para graficar */
   glutReshapeFunc(reshape);

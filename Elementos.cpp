@@ -64,11 +64,11 @@ void dibujarBorde(float x, float y){
 void dibujarBase(float x, float y) {
   glPushMatrix();
   glBegin(GL_QUADS);
-  glNormal3f(0.0,1.0,0.0);
-  glColor3f(1.0,1.0,1.0); glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0,0.0,0.0);
-  glColor3f(1.0,1.0,1.0); glTexCoord2f(x, 0.0f); glVertex3f(x,0.0,0.0);
-  glColor3f(1.0,1.0,1.0); glTexCoord2f(x, y); glVertex3f(x,y,0.0);
-  glColor3f(1.0,1.0,1.0); glTexCoord2f(0.0f, y); glVertex3f(0.0,y,0.0);
+  //  glNormal3f(0.0,1.0,0.0);
+  glColor3f(0.0,1.0,1.0); /*glTexCoord2f(0.0f, 0.0f); */glVertex3f(0.0,0.0,0.0);
+  glColor3f(0.0,1.0,1.0); /*glTexCoord2f(x, 0.0f);*/ glVertex3f(x,0.0,0.0);
+  glColor3f(0.0,1.0,1.0); /*glTexCoord2f(x, y);*/ glVertex3f(x,y,0.0);
+  glColor3f(0.0,1.0,1.0); /*glTexCoord2f(0.0f, y);*/ glVertex3f(0.0,y,0.0);
   glEnd();
   glPopMatrix();
 }
