@@ -205,6 +205,12 @@ int Jugador::getNumTurbo() {
   return turbo;
 }
 
+double Jugador::incrementarVel() {
+  if (velocidadIncremental >= velocidad) return velocidad;
+  velocidadIncremental += velocidadIncremental;
+  return velocidadIncremental;
+}
+
 void Nivel::setGo() {
   for(vector<Contrincante>::iterator it = listaContrincantes.begin();
       it != listaContrincantes.end(); ++it) {
@@ -223,16 +229,16 @@ void Jugador::dibujarJugador() {
   if (go) {
     switch (dir) {
     case ARRIBA:
-      ubicacionActual.setY(ubicacionActual.getY() + velocidad);
+      ubicacionActual.setY(ubicacionActual.getY() + incrementarVel());
       break;
     case ABAJO:
-      ubicacionActual.setY(ubicacionActual.getY() - velocidad);
+      ubicacionActual.setY(ubicacionActual.getY() - incrementarVel());
       break;
     case IZQUIERDA:
-      ubicacionActual.setX(ubicacionActual.getX() - velocidad);
+      ubicacionActual.setX(ubicacionActual.getX() - incrementarVel());
       break;
     case DERECHA:
-      ubicacionActual.setX(ubicacionActual.getX() + velocidad);
+      ubicacionActual.setX(ubicacionActual.getX() + incrementarVel());
       break;
     }
   }
