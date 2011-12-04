@@ -95,39 +95,39 @@
       <objeto>
         <maya>
           <archivo>
-            ./modelos/snail.ply
+            ./modelos/Tron/Main Objects/CrowdStdF.obj
           </archivo>
           <x>
-            60
+            10
           </x>
           <y>
-            20
+            10
           </y>
         </maya>
       </objeto>
       <objeto>
         <maya>
           <archivo>
-            ./modelos/golfball.ply
+            ./modelos/Tron/Main Objects/CrowdMechanic.obj
           </archivo>
           <x>
-            20
+            15
           </x>
           <y>
-            30
+            5
           </y>
         </maya>
       </objeto>
       <objeto>
         <maya>
           <archivo>
-            ./modelos/bunny.ply
+            ./modelos/Tron/Main Objects/Abraxas_SKM.obj
           </archivo>
           <x>
-            20
+            12
           </x>
           <y>
-            80
+            18
           </y>
         </maya>
       </objeto>

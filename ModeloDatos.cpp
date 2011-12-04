@@ -142,7 +142,7 @@ void drawMesh(TriMesh *themesh, Coeficientes cf) {
   glEnd();
 }
 
-Coeficientes coeficientesMaya(TriMesh *themesh) {
+Coeficientes coeficientesMayaJugadores(TriMesh *themesh) {
   int i1;
   int i2;
   int i3;
@@ -167,6 +167,33 @@ Coeficientes coeficientesMaya(TriMesh *themesh) {
   Coeficientes c = Coeficientes(cX, cY, cZ);
   return c;
 }
+
+Coeficientes coeficientesMayaObjetos(TriMesh *themesh) {
+  int i1;
+  int i2;
+  int i3;
+  float maximoX, maximoY, maximoZ;
+  maximoX = maximoY = maximoZ = 0.0; 
+  for(vector<TriMesh::Face>::iterator it = themesh->faces.begin();
+      it != themesh->faces.end();
+      ++it) {
+    i1 = (*it)[0];
+    i2 = (*it)[1];
+    i3 = (*it)[2];
+    maximoX = max(max(max(themesh->vertices[i1][0], themesh->vertices[i2][0]),
+                      themesh->vertices[i3][0]), maximoX);
+    maximoY = max(max(max(themesh->vertices[i1][1], themesh->vertices[i2][1]),
+                      themesh->vertices[i3][1]), maximoZ);
+    maximoZ = max(max(max(themesh->vertices[i1][2], themesh->vertices[i2][2]),
+                      themesh->vertices[i3][2]), maximoZ);
+  }
+  double cX = 2.0 / maximoX;
+  double cY = 2.0 / maximoY;
+  double cZ = 2.0 / maximoZ;
+  Coeficientes c = Coeficientes(cX, cY, cZ);
+  return c;
+}
+
 
 void Jugador::dirIzquierda() {
   dir = IZQUIERDA;
@@ -305,6 +332,14 @@ void Nivel::dibujarJugadores() {
 
 // Dibujar objeto
 void Objeto::dibujarObjeto() {
+  glPushMatrix();
+  glColor3f(1.0,0.0,0.0);
+  //  glTranslatef(ubicacion.getX()*5.0, ubicacion.getY()*5.0 + 6,-1.5);
+  glTranslatef(ubicacion.getX(), ubicacion.getY(),1.0);
+  glRotatef(90.0,0.0,0.0,1.0);
+  glScalef(0.2,0.2,0.2);
+  drawMesh(themesh, cf);
+  glPopMatrix();
   return;
 }
 

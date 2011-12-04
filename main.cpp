@@ -98,9 +98,7 @@ void display(void) {
   // Dibujar jugadores en posición inicial
   j.listaNiveles[nivelActual].dibujarJugadores();
   // Dibujar obstáculos
-  //  j.listaNiveles[nivelActual].dibujarObstaculos();
-  // Dibujar discos
-  //  j.listaNiveles[nivelActual].dibujarDiscos();
+  j.listaNiveles[nivelActual].dibujarObstaculos();
   glutPostRedisplay();
   glutSwapBuffers();
   glFlush ();
@@ -130,9 +128,11 @@ void flechas(int key, int x, int y) {
     break;
   case GLUT_KEY_DOWN:
     j.listaNiveles[nivelActual].j.dirAbajo();
+    //    giroV -= 2.0;
     break;
   case GLUT_KEY_UP:
     j.listaNiveles[nivelActual].j.dirArriba();
+    //    giroV += 2.0;
     break;
   }
 }
@@ -220,6 +220,7 @@ void keyboard (unsigned char key, int x, int y)  {
     case 'G': case 'g':
       j.listaNiveles[nivelActual].j.setGo();
       j.listaNiveles[nivelActual].setGo();
+      //      teclaTrasXDer();
       break;
     case 'B': case 'b': 
       teclaTrasYIzq();

@@ -13,6 +13,14 @@
 
 #define RAD_INT_TORUS 1.0
 #define RAD_EXT_TORUS 2.0
+#define COEF_TRON 2.0
+#define COEF_ABRAXAS 2.0
+#define COEF_BLACKGUARD 2.0
+#define COEF_CYCLES 5.0
+#define COEF_INFECTED 2.0
+#define COEF_CROWDMECH 2.0
+#define COEF_CROWDSTDF 2.0
+
 
 using namespace std;
 
@@ -62,7 +70,8 @@ class Coeficientes {
   }
 };
 
-Coeficientes coeficientesMaya(TriMesh *themesh);
+Coeficientes coeficientesMayaJugadores(TriMesh *themesh);
+Coeficientes coeficientesMayaObjetos(TriMesh *themesh);
 
 class Tablero {
  public:
@@ -144,23 +153,26 @@ class Objeto
  public:
   Punto ubicacion;
   char *archivoMaya;
+  Coeficientes cf;
   TriMesh *themesh;
 
   Objeto()
     {
       ubicacion = Punto();
       archivoMaya = NULL;
+      cf = Coeficientes();
     }
 
   Objeto(Punto v, char *am) 
     {
       ubicacion = v;
       archivoMaya = am;
-      
+      cf = Coeficientes();
       // Cargar maya
       const char *filename = archivoMaya;
       themesh = TriMesh::read(filename);
       themesh->need_faces();
+      cout << "Objeto = " << archivoMaya << endl;
     }
 
   void Print();
@@ -257,7 +269,6 @@ class Contrincante {
     const char *filename = maya;
     themesh = TriMesh::read(filename);
     themesh->need_faces();
-    cout << "Maya Contrincante = " << maya << endl;
   }
   void Print();
   void dibujarTrayectoriaC();
