@@ -3,6 +3,9 @@
 #include <GL/gl.h>
 #include <GL/glut.h>
 #include <vector>
+#include <signal.h>
+#include <unistd.h>
+#include <sys/types.h>
 #include "include/ModeloDatos.h"
 #include "include/Camara.h"
 #include "include/Parser.h"
@@ -34,14 +37,6 @@ GLfloat camUpDown = 0.0;
 GLfloat rot = 0.0;
 GLfloat avanceX = 0.0;
 GLfloat avanceY = 0.0;
-float maximoX = 0.0;
-float maximoY = 0.0;
-float maximoZ = 0.0;
-float despJugX = 0.0;
-float despJugY = 0.0;
-double cX;
-double cY;
-double cZ;
 
 /* INICIO Variables para display list */
 GLuint base;
@@ -121,6 +116,11 @@ void cambioCamara() {
   }
 }
 
+/* Alarma para controlar Turbo */
+void  SIGALRM_control (int signum) {
+  j.listaNiveles[nivelActual].j.desactivarTurbo();
+}
+
 void display(void) {
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
@@ -144,18 +144,13 @@ void display(void) {
   glBindTexture(GL_TEXTURE_2D, texName2);
   glCallList(paredes);
   glDisable(GL_TEXTURE_2D);
-
+  /*
   glLightfv(GL_LIGHT0, GL_POSITION, ambiente);
   glLightfv(GL_LIGHT0, GL_POSITION, difusa);
   glLightfv(GL_LIGHT0, GL_POSITION, especular);
   glLightfv(GL_LIGHT0, GL_POSITION, posicion);
-  glCallList(tablero);
-
-  glPushMatrix();
-  glScalef(0.2,0.2,0.2);
-  glTranslatef(despJugX, despJugY,0.0);
-  //  glCallList(meshJugador);
-  glPopMatrix();
+  */ 
+ glCallList(tablero);
 
   // Dibujar trayectoria de Jugador
   //  j.listaNiveles[nivelActual].j.dibujarTrayectoriaJ();
@@ -163,9 +158,7 @@ void display(void) {
   // Dibujar jugadores en posición inicial
   j.listaNiveles[nivelActual].dibujarJugadores();
   // Dibujar obstáculos
-  //  j.listaNiveles[nivelActual].dibujarObstaculos();
-  // Dibujar discos
-  //  j.listaNiveles[nivelActual].dibujarDiscos();
+  j.listaNiveles[nivelActual].dibujarObstaculos();
   glutPostRedisplay();
   glutSwapBuffers();
   glFlush ();
@@ -181,8 +174,10 @@ void reshape (int w, int h) {
   //  gluPerspective(90.0f, 1, 0.5, 100.0);
   gluPerspective(zoom, 1, 0.5, 100.0);
   glMatrixMode(GL_MODELVIEW);
+  /*
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
+  */
   cout << w << endl;
   cout << h << endl;
   venMain_w = w;
@@ -222,42 +217,20 @@ void subReshape (int w, int h) {
 }
 
 void flechas(int key, int x, int y) {
-  // float tmpMax = 10.0;
-  // float tmpMov = 1.0;
-  // switch(key) {
-  // case GLUT_KEY_LEFT:
-  //   if (giroH > (-tmpMax))
-  //     giroH -= tmpMov;
-  //   break;
-  // case GLUT_KEY_RIGHT:
-  //   if (giroH < (tmpMax))
-  //     giroH += tmpMov;
-  //   break;
-  // case GLUT_KEY_DOWN:
-  //   if (giroV > (-tmpMax))
-  //     giroV -= tmpMov;
-  //   break;
-  // case GLUT_KEY_UP:
-  //   //    if (giroV < (tmpMax))
-  //     giroV += tmpMov;
-  //   break;
-  // }
-  //  mouVenX = x;
-  //  mouVenY = y;
-  //  proyectarMouse(x,y);
-
   switch(key) {
   case GLUT_KEY_LEFT:
-      despJugX -= 2.0;
+    j.listaNiveles[nivelActual].j.dirIzquierda();
     break;
   case GLUT_KEY_RIGHT:
-      despJugX += 2.0;
+    j.listaNiveles[nivelActual].j.dirDerecha();
     break;
   case GLUT_KEY_DOWN:
-      despJugY -= 2.0;
+    j.listaNiveles[nivelActual].j.dirAbajo();
+    //    giroV -= 2.0;
     break;
   case GLUT_KEY_UP:
-      despJugY += 2.0;
+    j.listaNiveles[nivelActual].j.dirArriba();
+    //    giroV += 2.0;
     break;
   }
 }
@@ -329,23 +302,18 @@ void endSD() {
   glLightfv(GL_LIGHT0, GL_POSITION, especular);
   glLightfv(GL_LIGHT0, GL_POSITION, posicion);
   glCallList(tablero);
-  glPushMatrix();
-  glScalef(0.2,0.2,0.2);
-  glTranslatef(despJugX, despJugY,0.0);
-  //  glCallList(meshJugador);
-  glPopMatrix();
+
   // Dibujar trayectoria de Jugador
   //  j.listaNiveles[nivelActual].j.dibujarTrayectoriaJ();
   j.listaNiveles[nivelActual].dibujarTrayectoriaContrincantes();
   // Dibujar jugadores en posición inicial
   j.listaNiveles[nivelActual].dibujarJugadores();
   // Dibujar obstáculos
-  //  j.listaNiveles[nivelActual].dibujarObstaculos();
-  // Dibujar discos
-  //  j.listaNiveles[nivelActual].dibujarDiscos();
+  j.listaNiveles[nivelActual].dibujarObstaculos();
   glutPostRedisplay();
   glutSwapBuffers();
   glFlush ();
+  return;
 }
 
 void subDisplay1() {
@@ -441,15 +409,17 @@ void keyboard (unsigned char key, int x, int y)  {
     case 'F': case 'f': 
       teclaTrasXIzq();
       break;
-    case 'G': case 'g':
-      teclaTrasXDer();
-      break;
     case 'B': case 'b': 
       teclaTrasYIzq();
       break;
     case 'N': case 'n':
       teclaTrasYDer();
       break;
+    case 32: // TURBO !
+      if (j.listaNiveles[nivelActual].j.getNumTurbo() > 0) {
+        j.listaNiveles[nivelActual].j.activarTurbo();
+        alarm(1);
+      }
     default:
       printf("Didnt match\n");
       break;
@@ -457,6 +427,7 @@ void keyboard (unsigned char key, int x, int y)  {
   return;
 }
 */
+
 void textureInit(){
    glClearColor (0.0, 0.0, 0.0, 0.0);
    glShadeModel(GL_SMOOTH);
@@ -505,11 +476,6 @@ static void init(void) {
   glNewList(paredes, GL_COMPILE);
   dibujarTablero(tamX,tamY,tamZ);
   glEndList();
-  // // mesh Jugador
-  // meshJugador = glGenLists(1);
-  // glNewList(meshJugador, GL_COMPILE);
-  // //  drawMesh();
-  // glEndList();
   return;
 }
 
@@ -521,8 +487,6 @@ void initLuz() {
 
 void initPosicion() {
   posicion = {0.5*tamX,0.5*tamY,0.3,0.0};
-  // despJugX = j.listaNiveles[nivelActual].j.posInicial.getX()*5.0;
-  // despJugY = j.listaNiveles[nivelActual].j.posInicial.getY() + 6;
 }
 
 void initTamTablero(Juego j, int nivelActual) {
@@ -560,6 +524,12 @@ void offVentanas(){
 void keyboard (unsigned char key, int x, int y)  {
   switch (key)
     {
+    case 'G': case 'g':
+      j.listaNiveles[nivelActual].j.setGo();
+      j.listaNiveles[nivelActual].setGo();
+      //      teclaTrasXDer();
+      break;
+
     case 'T': case 't':
       if (camara != 4) {
 	camara = 4;
@@ -644,12 +614,14 @@ int main (int argc, char **argv) {
 
   /* Directivas para graficar */
   init();
+  // Binding de alarma
+  signal (SIGALRM, SIGALRM_control);
   glutReshapeFunc(reshape);
   glutDisplayFunc(display);
   glutSpecialFunc(flechas);
   glutKeyboardFunc(keyboard);
-
+  
   glutMainLoop();
-
+  
   exit (EXIT_SUCCESS);
 }

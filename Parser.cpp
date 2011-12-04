@@ -16,7 +16,7 @@ Trayectoria parseTrayectoria(TiXmlHandle rootTrayectoria)
 {
   // velocidad 
   TiXmlElement *pElem = rootTrayectoria.FirstChild("velocidad").Element();
-  double vel = atof(pElem->GetText());
+  double vel = atof(pElem->GetText())/5.0;
   // número de puntos
   pElem = rootTrayectoria.FirstChild("puntos").Element();
   int pts = atoi(pElem->GetText());
@@ -28,8 +28,6 @@ Trayectoria parseTrayectoria(TiXmlHandle rootTrayectoria)
     {
       TiXmlHandle rootPunto(nodoPunto);
       Punto pt = parsePunto(rootPunto);
-      pt.setX(pt.getX()*5.0);
-      pt.setY(pt.getY()*5.0+6.0);
       listPts.push_back(pt);
       i++;
     }
@@ -41,7 +39,7 @@ Jugador parseJugador(TiXmlHandle rootJugador, int vidas)
 {
   // disparo
   TiXmlElement *pElem = rootJugador.FirstChild("velocidad").Element();
-  double velocidad = atof(pElem->GetText());
+  double velocidad = atof(pElem->GetText())/5.0;
   pElem = rootJugador.FirstChild("posInicial").Element();
   TiXmlHandle rootPosInicial(pElem);
   pElem = rootPosInicial.FirstChild("punto").Element();
@@ -50,14 +48,14 @@ Jugador parseJugador(TiXmlHandle rootJugador, int vidas)
   pElem = rootJugador.FirstChild("turbo").Element();
   int turbo = atoi(pElem->GetText());
   pElem = rootJugador.FirstChild("velocidadTurbo").Element();
-  double velocidadTurbo = atof(pElem->GetText());
+  double velocidadTurbo = atof(pElem->GetText())/5.0;
   pElem = rootJugador.FirstChild("maya").Element();
   TiXmlHandle rootMaya(pElem);
   pElem = rootMaya.FirstChild("archivo").Element();
   char *archivoMaya = strdup(pElem->GetText());
   Jugador jug(vidas, velocidad, turbo, velocidadTurbo, archivoMaya,
               posInicial);
-  jug.cf = coeficientesMaya(jug.themesh);
+  jug.cf = coeficientesMayaJugadores(jug.themesh);
   return jug;
 }
 
@@ -71,7 +69,7 @@ Contrincante parseContrincante(TiXmlHandle rootContrincante)
   pElem = rootMaya.FirstChild("archivo").Element();
   char* archivoMaya = strdup(pElem->GetText());
   Contrincante ctr = Contrincante(tr, archivoMaya);
-  ctr.cf = coeficientesMaya(ctr.themesh);
+  ctr.cf = coeficientesMayaJugadores(ctr.themesh);
   return ctr;
 }
 
@@ -100,6 +98,7 @@ vector<Objeto> parseObjetos(TiXmlHandle rootObjetos)
       int y = atoi(pElem->GetText());
       Punto pto(x,y);
       Objeto obj = Objeto(pto, archivo);
+      obj.cf = coeficientesMayaObjetos(obj.themesh);
       listObjetos.push_back(obj);
       i++;
     }
