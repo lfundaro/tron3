@@ -227,9 +227,8 @@ class Contrincante {
   Contrincante(Trayectoria tr, char* mya) {
     t = tr;
     maya = mya;
-    ubicacionActual = Punto(t.listaPuntos[0].getX(), 
+    ubicacionActual = Punto(t.listaPuntos[0].getX(),
                             t.listaPuntos[0].getY());
-    
     // Cargar maya
     const char *filename = maya;
     themesh = TriMesh::read(filename);
@@ -289,6 +288,7 @@ class Nivel
   void dibujarJugadores();
   void dibujarObstaculos();
   void Print();
+  Punto getSalida();
 };
 
 class Juego

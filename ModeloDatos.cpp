@@ -250,6 +250,10 @@ void Nivel::dibujarObstaculos()
     }
 }
 
+Punto Nivel::getSalida() {
+  return salida;
+}
+
 // Dibuja trayectoria de contrincante
 void Contrincante::dibujarTrayectoriaC()
 {
