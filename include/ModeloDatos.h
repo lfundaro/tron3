@@ -167,11 +167,14 @@ class Objeto
   void dibujarObjeto();
 };
 
+enum Direccion { IZQUIERDA, DERECHA, ARRIBA, ABAJO};
+
 class Jugador
 {
  public:
   int vidas;
   double velocidad;
+  enum Direccion dir;
   int turbo;
   double velocidadTurbo;
   char * archivoMaya;
@@ -183,6 +186,7 @@ class Jugador
     {
       vidas = 3;
       velocidad = 0.0;
+      dir = ARRIBA;
       turbo = 0;
       velocidadTurbo = 0.0;
       archivoMaya = NULL;
@@ -194,6 +198,7 @@ class Jugador
     {
       vidas = v;
       velocidad = vl;
+      dir = ARRIBA;
       turbo = t;
       velocidadTurbo = vlt;
       archivoMaya = am;
@@ -207,6 +212,10 @@ class Jugador
 
   void Print();
   void dibujarJugador();
+  void dirIzquierda();
+  void dirDerecha();
+  void dirArriba();
+  void dirAbajo();
 };
 
 class Contrincante {

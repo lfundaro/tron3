@@ -45,14 +45,6 @@ GLfloat camUpDown = 0.0;
 GLfloat rot = 0.0;
 GLfloat avanceX = 0.0;
 GLfloat avanceY = 0.0;
-float maximoX = 0.0;
-float maximoY = 0.0;
-float maximoZ = 0.0;
-float despJugX = 0.0;
-float despJugY = 0.0;
-double cX;
-double cY;
-double cZ;
 
 /* INICIO Variables para display list */
 GLuint base;
@@ -92,12 +84,6 @@ void display(void) {
   glLightfv(GL_LIGHT0, GL_POSITION, posicion);
   glCallList(tablero);
 
-  glPushMatrix();
-  glScalef(0.2,0.2,0.2);
-  glTranslatef(despJugX, despJugY,0.0);
-  //  glCallList(meshJugador);
-  glPopMatrix();
- 
   // Dibujar trayectoria de Jugador
   //  j.listaNiveles[nivelActual].j.dibujarTrayectoriaJ();
   j.listaNiveles[nivelActual].dibujarTrayectoriaContrincantes();
@@ -127,42 +113,18 @@ void reshape (int w, int h) {
 }
 
 void flechas(int key, int x, int y) {
-  // float tmpMax = 10.0;
-  // float tmpMov = 1.0;
-  // switch(key) {
-  // case GLUT_KEY_LEFT:
-  //   if (giroH > (-tmpMax))
-  //     giroH -= tmpMov;
-  //   break;
-  // case GLUT_KEY_RIGHT:
-  //   if (giroH < (tmpMax))
-  //     giroH += tmpMov;
-  //   break;
-  // case GLUT_KEY_DOWN:
-  //   if (giroV > (-tmpMax))
-  //     giroV -= tmpMov;
-  //   break;
-  // case GLUT_KEY_UP:
-  //   //    if (giroV < (tmpMax))
-  //     giroV += tmpMov;
-  //   break;
-  // }
-  //  mouVenX = x;
-  //  mouVenY = y;
-  //  proyectarMouse(x,y);
-
   switch(key) {
   case GLUT_KEY_LEFT:
-      despJugX -= 2.0;
+    j.listaNiveles[nivelActual].j.dirIzquierda();
     break;
   case GLUT_KEY_RIGHT:
-      despJugX += 2.0;
+    j.listaNiveles[nivelActual].j.dirDerecha();
     break;
   case GLUT_KEY_DOWN:
-      despJugY -= 2.0;
+    j.listaNiveles[nivelActual].j.dirAbajo();
     break;
   case GLUT_KEY_UP:
-      despJugY += 2.0;
+    j.listaNiveles[nivelActual].j.dirArriba();
     break;
   }
 }
@@ -327,8 +289,6 @@ void initLuz() {
 
 void initPosicion() {
   posicion = {0.5*tamX,0.5*tamY,0.3,0.0};
-  // despJugX = j.listaNiveles[nivelActual].j.posInicial.getX()*5.0;
-  // despJugY = j.listaNiveles[nivelActual].j.posInicial.getY() + 6;
 }
 
 void initTamTablero(Juego j, int nivelActual) {

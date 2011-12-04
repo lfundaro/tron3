@@ -74,7 +74,7 @@ double Trayectoria::calcDesp(double velocidad)
 
 void Trayectoria::ecuacionRecta(Punto *posActual)
 {
-  double desplazamiento = calcDesp(velocidad/**1/60.0*/);
+  double desplazamiento = calcDesp(velocidad/*10.0*/);
   if (desplazamiento > 0.0) {
     double norm = normalizarD(desplazamiento);
     double y_prima = listaPuntos[origen].getY() + (lambdaY + norm)*
@@ -138,16 +138,7 @@ void drawMesh(TriMesh *themesh, Coeficientes cf) {
                themesh->vertices[i2][2]*cf.cZ);
     glVertex3f(themesh->vertices[i3][0]*cf.cX, themesh->vertices[i3][1]*cf.cY,
                themesh->vertices[i3][2]*cf.cZ);
-
-    // glVertex3f(themesh->vertices[i1][0],themesh->vertices[i1][1],
-    //            themesh->vertices[i1][2]);
-    // glVertex3f(themesh->vertices[i2][0], themesh->vertices[i2][1],
-    //            themesh->vertices[i2][2]);
-    // glVertex3f(themesh->vertices[i3][0], themesh->vertices[i3][1],
-    //            themesh->vertices[i3][2]);
-
-  }
-  //  cout << cf.cX << " " << cf.cY << " " << cf.cY << endl;
+   }
   glEnd();
 }
 
@@ -155,12 +146,8 @@ Coeficientes coeficientesMaya(TriMesh *themesh) {
   int i1;
   int i2;
   int i3;
-  float maximoX;
-  float maximoY;
-  float maximoZ;
-  maximoX = 0.0; 
-  maximoY = 0.0;
-  maximoZ = 0.0;
+  float maximoX, maximoY, maximoZ;
+  maximoX = maximoY = maximoZ = 0.0; 
   for(vector<TriMesh::Face>::iterator it = themesh->faces.begin();
       it != themesh->faces.end();
       ++it) {
@@ -174,7 +161,6 @@ Coeficientes coeficientesMaya(TriMesh *themesh) {
     maximoZ = max(max(max(themesh->vertices[i1][2], themesh->vertices[i2][2]),
             themesh->vertices[i3][2]), maximoZ);
   }
-  
   double cX = 5.0 / maximoX;
   double cY = 5.0 / maximoY;
   double cZ = 5.0 / maximoZ;
@@ -182,22 +168,59 @@ Coeficientes coeficientesMaya(TriMesh *themesh) {
   return c;
 }
 
+void Jugador::dirIzquierda() {
+  dir = IZQUIERDA;
+}
+
+void Jugador::dirDerecha() {
+  dir = DERECHA;
+}
+
+void Jugador::dirArriba() {
+  dir = ARRIBA;
+}
+
+void Jugador::dirAbajo() {
+  dir = ABAJO;
+}
+
 void Jugador::dibujarJugador() {
   glPushMatrix();
-  //  glColor3f(0.2,0.9,0.5);
   // Punto de origen -- Punto destino ?
   //  t.calcularTrayectoria(&posActual);
   //  glColor3f(1.0,0.0,0.0);
-  //  glTranslatef(ubicacionActual.getX(), ubicacionActual.getY(), 0.0);
-  //glScalef(cf.cX,cf.cY,cf.cZ);
-  //  cout << "PosInicialX = " << posInicial.getX()*5.0 << endl;
-  //  cout << "PosInicialY = " << posInicial.getY() << endl;
   glScalef(0.2,0.2,0.2);
+  // Actualizar desplazamiento del jugador
+  switch (dir) {
+  case ARRIBA:
+    ubicacionActual.setY(ubicacionActual.getY() + velocidad);
+    break;
+  case ABAJO:
+    ubicacionActual.setY(ubicacionActual.getY() - velocidad);
+    break;
+  case IZQUIERDA:
+    ubicacionActual.setX(ubicacionActual.getX() - velocidad);
+    break;
+  case DERECHA:
+    ubicacionActual.setX(ubicacionActual.getX() + velocidad);
+    break;
+  }
   glTranslatef(ubicacionActual.getX()*5.0, ubicacionActual.getY()*5.0 + 6,0.0);
-  //glTranslatef(ubicacionActual.getX(), ubicacionActual.getY(),0.0);
-  //  glScalef(0.2,0.2,0.2);
+  // Rotar ?
+  switch (dir) {
+  case ARRIBA:
+    break;
+  case ABAJO:
+    glRotatef(180.0,0.0,0.0,1.0);
+    break;
+  case IZQUIERDA:
+    glRotatef(90.0,0.0,0.0,1.0);
+    break;
+  case DERECHA:
+    glRotatef(-90.0,0.0,0.0,1.0);
+    break;
+  }
   drawMesh(themesh, cf);
-  //  cout << cf.cX << " " << cf.cY << " " << cf.cY << endl;
   glPopMatrix();
   return;
 }
