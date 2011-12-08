@@ -95,67 +95,41 @@ void camara1(){
     // Vista al Frente
     gluLookAt(posActualJugador.getX(),posActualJugador.getY()+1.4,1,
               posActualJugador.getX(),posActualJugador.getY()+3.5,0,
-              0.0,1.0,0.0);
+              0.0,0.0,1.0);
   else if (angulo == -1) {
     // Vista hacia atras
-    
-    glRotatef(180.0f,0.0f,1.0f,0.0f);
-    gluLookAt(posActualJugador.getX(),posActualJugador.getY()+2,1.5,
-              posActualJugador.getX(),posActualJugador.getY()+8,0.5,
-              0.0,1.0,0.0);
-    
-    /*
-    glRotatef(180.0f,0.0f,0.0f,1.0f);
-    glRotatef(90.0f,1.0f,0.0f,0.0f);
-    // glRotatef(90.0f,0.0f,1.0f,0.0f);
-    gluLookAt(posActualJugador.getX(),posActualJugador.getY()+1.5,1,
-              posActualJugador.getX(),posActualJugador.getY()+4.5,0,
-              0.0,1.0,0.0);
-    */
-    /*
     glRotatef(180.0f,0.0f,1.0f,0.0f);
     gluLookAt(posActualJugador.getX(),posActualJugador.getY()+3,1.5,
-	      posActualJugador.getX()+sin(dtr(180.0f)),posActualJugador.getY()+13,0,
-              0.0,1.0,0.0);
-    */
+              posActualJugador.getX(),posActualJugador.getY()+8,0.5,
+              0.0,0.0,1.0);
   }
   else if (angulo == 2) {
-    // Vista hacia la derecha
-    glRotatef(-45.0f,1.0f,0.0f,0.0f);
-    glRotatef(90.0f,0.0f,0.0f,1.0f);
-    gluLookAt(posActualJugador.getX()+0.4,posActualJugador.getY()+1.2f,1,
-	      posActualJugador.getX()+0.4,posActualJugador.getY()+1.2f,0,
-              0.0,1.0,0.0);
+    // Vista a la derecha
+    gluLookAt(posActualJugador.getX()+0.1,posActualJugador.getY()+1.25,1,
+	      posActualJugador.getX()+5,posActualJugador.getY()+1.25,0,
+              0.0,0.0,1.0);
   }
   else if (angulo == -2) {
-    // Vista hacia la izquierda
-    glRotatef(-45.0f,1.0f,0.0f,0.0f);
-    glRotatef(270.0f,0.0f,0.0f,1.0f);
-    gluLookAt(posActualJugador.getX()-0.4,posActualJugador.getY()+1.2f,1,
-	      posActualJugador.getX()-0.4,posActualJugador.getY()+1.2f,0,
-              0.0,1.0,0.0);
-
-    /*Posible BASE
-      gluLookAt(posActualJugador.getX(),posActualJugador.getY()+1,2,
-      posActualJugador.getX(),posActualJugador.getY()+1,0,
-              0.0,1.0,0.0);
-    */
+    // Vista a la izquierda
+    gluLookAt(posActualJugador.getX()-0.1,posActualJugador.getY()+1.15,1,
+	      posActualJugador.getX()-5,posActualJugador.getY()+1.15,0,
+              0.0,0.0,1.0);
   }
 }
 
 void camara2() {
   // Vista desde arriba cerca del jugador
   Punto posActualJugador = (j.listaNiveles[nivelActual]).j.ubicacionActual;
-  gluLookAt (posActualJugador.getX(),posActualJugador.getY()+2,5,
-             posActualJugador.getX(),posActualJugador.getY()+2,0,
-             0.0,1, 0.0);
+  gluLookAt (posActualJugador.getX(),posActualJugador.getY(),5,
+             posActualJugador.getX(),posActualJugador.getY()+1,0,
+             0.0,0.0,1.0);
 }
 void camara3(){
   Punto salida = (j.listaNiveles[nivelActual]).salida;
-
+  Punto jugador = (j.listaNiveles[nivelActual]).j.ubicacionActual;
   //Vista desde la salida
   gluLookAt (salida.getX(),salida.getY(),5,
-	     0,0,0,
+	     jugador.getX(),jugador.getY(),0,
 	     0,0,1.0);
 }
     
@@ -164,15 +138,15 @@ void camaraA(){
   if (tamX == tamY) {
     gluLookAt (0.0, (-(tamX+2))/10, (tamY+2)/10*6,
                0.0,(-(tamY+2))/20, (-(tamX+2))/3,
-               0.0,1, 0.0);
+               0.0,0.0,1.0);
   } else if (tamX < tamY) {
     gluLookAt (0.0, (-(tamY+2))/10, (tamY+2)/10*6,
                0.0,(-(tamY+2))/20, (-(tamY+2))/3,
-               0.0,1, 0.0);
+               0.0,0.0,1.0);
   } else {
     gluLookAt (0.0, (-(tamX+2))/10, (tamX+2)/10*6,
                0.0,(-(tamX+2))/20, (-(tamX+2))/3,
-               0.0,1, 0.0);
+               0.0,0.0,1.0);
   }
   glTranslatef((-tamX)/2 + avanceX,(-tamY)/2 + avanceY,camUpDown);
 }
@@ -206,9 +180,6 @@ void display(void) {
 
   glLoadIdentity();
   cambioCamara();
-  /* La CAMARA Como dato
-  cam.go(tamX, tamY, giroH, giroV, avanceX, avanceY, camUpDown);
-  */
 
   /* Tablero */
 
@@ -222,10 +193,10 @@ void display(void) {
   glCallList(paredes);
   glDisable(GL_TEXTURE_2D);
 
-  // glLightfv(GL_LIGHT0, GL_POSITION, ambiente);
-  // glLightfv(GL_LIGHT0, GL_POSITION, difusa);
-  // glLightfv(GL_LIGHT0, GL_POSITION, especular);
-  // glLightfv(GL_LIGHT0, GL_POSITION, posicion);
+  //  glLightfv(GL_LIGHT0, GL_POSITION, ambiente);
+  //  glLightfv(GL_LIGHT0, GL_POSITION, difusa);
+  //  glLightfv(GL_LIGHT0, GL_POSITION, especular);
+  //  glLightfv(GL_LIGHT0, GL_POSITION, posicion);
   glCallList(tablero);
 
   // Dibujar trayectoria de Jugador
@@ -285,7 +256,7 @@ void subReshape (int w, int h) {
 
   glMatrixMode(GL_MODELVIEW);
   //  glEnable(GL_LIGHTING);
-  // glEnable(GL_LIGHT0);
+  //  glEnable(GL_LIGHT0);
 }
 
 void flechas(int key, int x, int y) {
@@ -372,10 +343,10 @@ void endSD() {
   glBindTexture(GL_TEXTURE_2D, texName2);
   glCallList(paredes);
   glDisable(GL_TEXTURE_2D);
-  glLightfv(GL_LIGHT0, GL_POSITION, ambiente);
-  glLightfv(GL_LIGHT0, GL_POSITION, difusa);
-  glLightfv(GL_LIGHT0, GL_POSITION, especular);
-  glLightfv(GL_LIGHT0, GL_POSITION, posicion);
+  //  glLightfv(GL_LIGHT0, GL_POSITION, ambiente);
+  //  glLightfv(GL_LIGHT0, GL_POSITION, difusa);
+  //  glLightfv(GL_LIGHT0, GL_POSITION, especular);
+  //  glLightfv(GL_LIGHT0, GL_POSITION, posicion);
   glCallList(tablero);
 
   // Dibujar trayectoria de Jugador
@@ -544,7 +515,7 @@ void initPosicion() {
 void initTamTablero(Juego j, int nivelActual) {
   tamX = j.listaNiveles[nivelActual].t.getAncho();
   tamY = j.listaNiveles[nivelActual].t.getLargo();
-  tamZ = 2.0;
+  tamZ = 3.0;
 }
 
 void initVentana(){
