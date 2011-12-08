@@ -27,7 +27,7 @@
     </terrenoBN>   
     <jugador>
 	<velocidad>
-	  0.05
+	  0.5
 	</velocidad>
     <posInicial>
       <punto>

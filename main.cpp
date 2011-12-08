@@ -58,18 +58,20 @@ unsigned char* image = NULL;
 static GLuint texName2;
 unsigned char* image2 = NULL;
 
+static GLuint texVida0;
+unsigned char* vida0 = NULL;
 static GLuint texVida1;
 unsigned char* vida1 = NULL;
-
 static GLuint texVida2;
 unsigned char* vida2 = NULL;
-
 static GLuint texVida3;
 unsigned char* vida3 = NULL;
 
 static GLuint texAcel;
 unsigned char* acel = NULL;
 
+static GLuint texMapHERE;
+unsigned char* mapHERE = NULL;
 static GLuint texMapN;
 unsigned char* mapN = NULL;
 static GLuint texMapS;
@@ -86,6 +88,9 @@ static GLuint texMapSO;
 unsigned char* mapSO = NULL;
 static GLuint texMapSE;
 unsigned char* mapSE = NULL;
+
+static GLuint texPrueba;
+unsigned char* prueba = NULL;
 /* FIN Variables para las texturas*/
 
 /* INICIO Variables para el manejo de la Ventana y Sub-Ventanas*/
@@ -163,7 +168,7 @@ void camara3(){
              jugador.getX(),jugador.getY(),0,
              0,0,1.0);
 }
-    
+
 void camaraA(){
   // Vista desde Arriba de TODO el tablero
   if (tamX == tamY) {
@@ -237,52 +242,105 @@ datos_reshape(int w, int h)
   */
 }
 
+void decidirMap(){
+  int salidaX = (int)(j.listaNiveles[nivelActual]).salida.getX();
+  int jugadorX = (int)(j.listaNiveles[nivelActual]).j.ubicacionActual.getX();
+  int salidaY = (int)(j.listaNiveles[nivelActual]).salida.getY();
+  int jugadorY = (int)(j.listaNiveles[nivelActual]).j.ubicacionActual.getY();
+  if (salidaX < jugadorX) {
+    if (salidaY < jugadorY)
+      glBindTexture(GL_TEXTURE_2D, texMapSO);
+    else if (salidaY > jugadorY)
+      glBindTexture(GL_TEXTURE_2D, texMapNO);
+    else
+      glBindTexture(GL_TEXTURE_2D, texMapO);
+  } else if (salidaX > jugadorX){
+    if (salidaY < jugadorY)
+      glBindTexture(GL_TEXTURE_2D, texMapSE);
+    else if (salidaY > jugadorY)
+      glBindTexture(GL_TEXTURE_2D, texMapNE);
+    else
+      glBindTexture(GL_TEXTURE_2D, texMapE);
+  } else {
+    if (salidaY < jugadorY)
+      glBindTexture(GL_TEXTURE_2D, texMapS);
+    else if (salidaY > jugadorY)
+      glBindTexture(GL_TEXTURE_2D, texMapN);
+    else
+      glBindTexture(GL_TEXTURE_2D, texMapHERE);
+  }
+}
+
+void decidirVida() {
+  int vidas = (j.listaNiveles[nivelActual]).j.vidas;
+  if (vidas == 3) {
+    glBindTexture(GL_TEXTURE_2D, texVida3);
+  } else if (vidas == 2) {
+    glBindTexture(GL_TEXTURE_2D, texVida2);
+  } else if (vidas == 1) {
+    glBindTexture(GL_TEXTURE_2D, texVida1);
+  } else
+    glBindTexture(GL_TEXTURE_2D, texVida0);
+}
+
 void
 datos_display(void)
 {
   float base = -45;
   glClearColor(0.0f, 0.0f, 0.0f ,1.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
+
+  glShadeModel(GL_SMOOTH);
+  glEnable(GL_DEPTH_TEST);
   glEnable(GL_TEXTURE_2D);
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-  
-  
-  glPushMatrix();
-  glTranslatef(base,-10,0);
-  glBegin(GL_QUADS) ;
-  glColor3f(0.0,0.0,1.0);glTexCoord2f(0.0f, 0.0f);glVertex3f(0.0,0.0,0.0);
-  glColor3f(0.0,0.0,1.0);glTexCoord2f(1.0f, 0.0f);glVertex3f(45,0.0,0.0);
-  glColor3f(0.0,0.0,1.0);glTexCoord2f(1.0f, 1.0f);glVertex3f(45,20.0,0.0);
-  glColor3f(0.0,0.0,1.0);glTexCoord2f(0.0f, 1.0f);glVertex3f(0.0,20.0,0.0);
-  glEnd();
-  glPopMatrix();
-  
-  
-  glBindTexture(GL_TEXTURE_2D, texVida1);
-  glPushMatrix();
-  glTranslatef(base+45,0,0);
-  glBegin(GL_QUADS) ;
-  glColor3f(1.0,0.0,0.0);glTexCoord2f(0.0f, 0.0f);glVertex3f(0.0,0.0,0.0);
-  glColor3f(1.0,0.0,0.0);glTexCoord2f(1.0f, 0.0f);glVertex3f(45,0.0,0.0);
-  glColor3f(1.0,0.0,0.0);glTexCoord2f(1.0f, 1.0f);glVertex3f(45,10.0,0.0);
-  glColor3f(1.0,0.0,0.0);glTexCoord2f(0.0f, 1.0f);glVertex3f(0.0,10.0,0.0);
-  glEnd();
-  glPopMatrix();
-  
-  glBindTexture(GL_TEXTURE_2D, texVida1);
+  decidirMap();
   glPushMatrix();
   glTranslatef(base+45,-10,0);
   glBegin(GL_QUADS) ;
-  glColor3f(0.0,1.0,0.0);glTexCoord2f(0.0f, 0.0f);glVertex3f(0.0,0.0,0.0);
-  glColor3f(0.0,1.0,0.0);glTexCoord2f(1.0f, 0.0f);glVertex3f(45,0.0,0.0);
-  glColor3f(0.0,1.0,0.0);glTexCoord2f(1.0f, 1.0f);glVertex3f(45,10.0,0.0);
-  glColor3f(0.0,1.0,0.0);glTexCoord2f(0.0f, 1.0f);glVertex3f(0.0,10.0,0.0);
+  glColor3f(0.0,1.0,1.0);glTexCoord2f(0.0f, 0.0f);glVertex3f(0.0,0.0,0.0);
+  glColor3f(0.0,1.0,1.0);glTexCoord2f(1.0f, 0.0f);glVertex3f(45,0.0,0.0);
+  glColor3f(0.0,1.0,1.0);glTexCoord2f(1.0f, 1.0f);glVertex3f(45,10.0,0.0);
+  glColor3f(0.0,1.0,1.0);glTexCoord2f(0.0f, 1.0f);glVertex3f(0.0,10.0,0.0);
+  glEnd();
+  glPopMatrix();
+
+  decidirVida();
+  glPushMatrix();
+  glTranslatef(base+45,0,0);  
+  glBegin(GL_QUADS) ;
+  glColor3f(0.0,1.0,1.0);glTexCoord2f(0.0f, 0.0f);glVertex3f(0.0,0.0,0.0);
+  glColor3f(0.0,1.0,1.0);glTexCoord2f(1.0f, 0.0f);glVertex3f(45,0.0,0.0);
+  glColor3f(0.0,1.0,1.0);glTexCoord2f(1.0f, 1.0f);glVertex3f(45,10.0,0.0);
+  glColor3f(0.0,1.0,1.0);glTexCoord2f(0.0f, 1.0f);glVertex3f(0.0,10.0,0.0);
+  glEnd();
+  glPopMatrix();
+
+  glPushMatrix();
+  glBindTexture(GL_TEXTURE_2D, texAcel);
+  glTranslatef(base,-10,0);
+  glBegin(GL_QUADS) ;
+  glColor3f(0.0,1.0,1.0);glTexCoord2f(0.0f, 0.0f);glVertex3f(0.0,0.0,0.0);
+  glColor3f(0.0,1.0,1.0);glTexCoord2f(1.0f, 0.0f);glVertex3f(45,0.0,0.0);
+  glColor3f(0.0,1.0,1.0);glTexCoord2f(1.0f, 1.0f);glVertex3f(45,20.0,0.0);
+  glColor3f(0.0,1.0,1.0);glTexCoord2f(0.0f, 1.0f);glVertex3f(0.0,20.0,0.0);
   glEnd();
   glPopMatrix();
   glDisable(GL_TEXTURE_2D);
+  glPushMatrix();
+  glTranslatef(base+11,-10,0);
+  glBegin(GL_TRIANGLES) ;
+  glColor3f(1.0,0.0,0.0);glTexCoord2f(0.0f, 0.0f);glVertex3f(0.0,0.0,-1.0);
+  glColor3f(1.0,0.0,0.0);glTexCoord2f(1.0f, 0.0f);glVertex3f(3.0,0.0,-1.0);
+  glColor3f(1.0,0.0,0.0);glTexCoord2f(1.0f, 1.0f);glVertex3f(1.5,5.0,-1.0);
+  glEnd();
+  glPopMatrix();
+
+
+
   glutPostRedisplay();
   glutSwapBuffers();
   glFlush ();
@@ -370,6 +428,7 @@ void reshape (int w, int h) {
   subVen_w = (venMain_w - (3*GAP))/2;
   subVen_h = (venMain_h - (3*GAP))/2;
   glutSetWindow (subMain);
+  glMatrixMode(GL_MODELVIEW);
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
 
@@ -563,11 +622,6 @@ void keyboard (unsigned char key, int x, int y)  {
     case 'N': case 'n':
       teclaTrasYDer();
       break;
-    case 32: // TURBO !
-      if (j.listaNiveles[nivelActual].j.getNumTurbo() > 0) {
-        j.listaNiveles[nivelActual].j.activarTurbo();
-        alarm(1);
-      }
     default:
       printf("Didnt match\n");
       break;
@@ -581,6 +635,7 @@ void textureInit(){
   int iheight2, iwidth2;
   int pheight, pwidth;
   int gheight, gwidth;
+  int pruebaH, pruebaW;
   glClearColor (0.0, 0.0, 0.0, 0.0);
   glShadeModel(GL_SMOOTH);
   glEnable(GL_DEPTH_TEST);
@@ -604,6 +659,26 @@ void textureInit(){
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    image2 = glmReadPPM("texturas/imagen2.ppm", &iwidth2, &iheight2);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, iwidth2, iheight2, 0, GL_RGB, GL_UNSIGNED_BYTE, image2);
+   
+  // Aceleracion
+   glGenTextures(1, &texAcel);
+   glBindTexture(GL_TEXTURE_2D, texAcel);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   acel = glmReadPPM("texturas/acel.ppm", &gheight, &gwidth);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gheight, gwidth, 0, GL_RGB, GL_UNSIGNED_BYTE, acel);
+   
+  // Vida 0
+  glGenTextures(1, &texVida0);
+  glBindTexture(GL_TEXTURE_2D, texVida0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  vida1 = glmReadPPM("texturas/vida0.ppm", &pwidth, &pheight);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pwidth, pheight, 0, GL_RGB, GL_UNSIGNED_BYTE, vida0);
 
   // Vida 1
   glGenTextures(1, &texVida1);
@@ -614,7 +689,6 @@ void textureInit(){
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   vida1 = glmReadPPM("texturas/vida1.ppm", &pwidth, &pheight);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pwidth, pheight, 0, GL_RGB, GL_UNSIGNED_BYTE, vida1);
-  printf("%d,%d\n",pwidth,pheight);
 
   // Vida 2
   glGenTextures(1, &texVida2);
@@ -635,6 +709,16 @@ void textureInit(){
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   vida3 = glmReadPPM("texturas/vida3.ppm", &pwidth, &pheight);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pwidth, pheight, 0, GL_RGB, GL_UNSIGNED_BYTE, vida3);
+
+  // Mapa Here
+  glGenTextures(1, &texMapHERE);
+  glBindTexture(GL_TEXTURE_2D, texMapHERE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  mapHERE = glmReadPPM("texturas/metaHERE.ppm", &pwidth, &pheight);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pwidth, pheight, 0, GL_RGB, GL_UNSIGNED_BYTE, mapHERE);
 
   // Mapa Hacia N
   glGenTextures(1, &texMapN);
@@ -739,7 +823,7 @@ static void init(void) {
 }
 
 void initLuz() {
-  ambiente = {0,0.5,0.5,1};
+  ambiente = {0,0.7,0.7,1};
   difusa = {0.05*tamX, 0.05*tamY, 0.05, 1.0 };
   especular = {0.08*tamX, 0.08*tamY, 0.08, 1.0};
 }
@@ -866,6 +950,12 @@ void keyboard (unsigned char key, int x, int y)  {
       camara = 3;
       offVentanas();
       break;
+    case 32: // TURBO !
+      if (j.listaNiveles[nivelActual].j.getNumTurbo() > 0) {
+        j.listaNiveles[nivelActual].j.activarTurbo();
+        alarm(1);
+      }
+      break;
     }
 }
 
@@ -893,14 +983,14 @@ int main (int argc, char **argv) {
   glutSpecialFunc(flechas);
   glutKeyboardFunc(keyboard);
   glutReshapeFunc(reshape);
- /* Propiedades de openGL */
+  /*Propiedades de openGL */
   glEnable(GL_DEPTH_TEST);
   glEnable( GL_LINE_SMOOTH );
   glEnable( GL_POLYGON_SMOOTH );
   glClearDepth (1.0f);
   glClearColor(1.0,1.0,1.0,1.0f);
   glShadeModel(GL_SMOOTH);
-
+  
   glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   textureInit();
@@ -911,8 +1001,16 @@ int main (int argc, char **argv) {
   signal (SIGALRM, SIGALRM_control);
   glutKeyboardFunc(keyboard);
   subDato = glutCreateSubWindow(venMain,0,venMain_h-100,venDato_w,100);
-  glutReshapeFunc(datos_reshape);
+  initVentana();
+  glEnable(GL_DEPTH_TEST);
+  glEnable( GL_LINE_SMOOTH );
+  glEnable( GL_POLYGON_SMOOTH );
+  glClearDepth (1.0f);
+  glClearColor(1.0,1.0,1.0,1.0f);
+  glShadeModel(GL_SMOOTH);
   glutDisplayFunc(datos_display);
+  glutReshapeFunc(datos_reshape);
+
   glutSpecialFunc(flechas);
   glutKeyboardFunc(keyboard);
 
