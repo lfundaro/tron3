@@ -27,18 +27,18 @@
     </terrenoBN>   
     <jugador>
 	<velocidad>
-	  1
+	  0.05
 	</velocidad>
     <posInicial>
       <punto>
-        <x>10</x> <y>0</y>
+        <x>10</x> <y>10</y>
       </punto>
     </posInicial>
 	<turbo>
-	  4
+	  2
 	</turbo>
 	<velocidadTurbo>
-          3
+          2
 	</velocidadTurbo>
         <maya>
           <archivo>

@@ -26,7 +26,6 @@ float tamZ;
 float giroH = 0;
 float giroV = 0;
 int nivelActual = 0;
-Punto posActualJugador;
 vector<Punto> posContrincante;
 double incr = 0.001;
 
@@ -77,43 +76,122 @@ int subVen_h = (venMain_h - (3*GAP))/2;
 /* FIN Variables para el manejo de la Ventana y Sub-Ventanas*/
 
 /* FIN Variables globales */
+float varX = 0;
+float varY = 0;
+float varZ = 0;
+//Punto inicio =  (j.listaNiveles[nivelActual]).j.ubicacionActual;
+float angulo = 1;
+float dtr( float d )
+{
+        return d*3.141592/180;
+}
+
+void camara1(){
+  Punto posActualJugador = (j.listaNiveles[nivelActual]).j.ubicacionActual;
+  float desX;
+  float desY;
+  //  Vista en 1ra Persona
+  if (angulo == 1)
+    // Vista al Frente
+    gluLookAt(posActualJugador.getX(),posActualJugador.getY()+1.4,1,
+              posActualJugador.getX(),posActualJugador.getY()+3.5,0,
+              0.0,1.0,0.0);
+  else if (angulo == -1) {
+    // Vista hacia atras
+    
+    glRotatef(180.0f,0.0f,1.0f,0.0f);
+    gluLookAt(posActualJugador.getX(),posActualJugador.getY()+2,1.5,
+              posActualJugador.getX(),posActualJugador.getY()+8,0.5,
+              0.0,1.0,0.0);
+    
+    /*
+    glRotatef(180.0f,0.0f,0.0f,1.0f);
+    glRotatef(90.0f,1.0f,0.0f,0.0f);
+    // glRotatef(90.0f,0.0f,1.0f,0.0f);
+    gluLookAt(posActualJugador.getX(),posActualJugador.getY()+1.5,1,
+              posActualJugador.getX(),posActualJugador.getY()+4.5,0,
+              0.0,1.0,0.0);
+    */
+    /*
+    glRotatef(180.0f,0.0f,1.0f,0.0f);
+    gluLookAt(posActualJugador.getX(),posActualJugador.getY()+3,1.5,
+	      posActualJugador.getX()+sin(dtr(180.0f)),posActualJugador.getY()+13,0,
+              0.0,1.0,0.0);
+    */
+  }
+  else if (angulo == 2) {
+    // Vista hacia la derecha
+    glRotatef(-45.0f,1.0f,0.0f,0.0f);
+    glRotatef(90.0f,0.0f,0.0f,1.0f);
+    gluLookAt(posActualJugador.getX()+0.4,posActualJugador.getY()+1.2f,1,
+	      posActualJugador.getX()+0.4,posActualJugador.getY()+1.2f,0,
+              0.0,1.0,0.0);
+  }
+  else if (angulo == -2) {
+    // Vista hacia la izquierda
+    glRotatef(-45.0f,1.0f,0.0f,0.0f);
+    glRotatef(270.0f,0.0f,0.0f,1.0f);
+    gluLookAt(posActualJugador.getX()-0.4,posActualJugador.getY()+1.2f,1,
+	      posActualJugador.getX()-0.4,posActualJugador.getY()+1.2f,0,
+              0.0,1.0,0.0);
+
+    /*Posible BASE
+      gluLookAt(posActualJugador.getX(),posActualJugador.getY()+1,2,
+      posActualJugador.getX(),posActualJugador.getY()+1,0,
+              0.0,1.0,0.0);
+    */
+  }
+}
+
+void camara2() {
+  // Vista desde arriba cerca del jugador
+  Punto posActualJugador = (j.listaNiveles[nivelActual]).j.ubicacionActual;
+  gluLookAt (posActualJugador.getX(),posActualJugador.getY()+2,5,
+             posActualJugador.getX(),posActualJugador.getY()+2,0,
+             0.0,1, 0.0);
+}
+void camara3(){
+  Punto salida = (j.listaNiveles[nivelActual]).salida;
+
+  //Vista desde la salida
+  gluLookAt (salida.getX(),salida.getY(),5,
+	     0,0,0,
+	     0,0,1);
+}
+    
+void camaraA(){
+  // Vista desde Arriba de TODO el tablero
+  if (tamX == tamY) {
+    gluLookAt (0.0, (-(tamX+2))/10, (tamY+2)/10*6,
+               0.0,(-(tamY+2))/20, (-(tamX+2))/3,
+               0.0,1, 0.0);
+  } else if (tamX < tamY) {
+    gluLookAt (0.0, (-(tamY+2))/10, (tamY+2)/10*6,
+               0.0,(-(tamY+2))/20, (-(tamY+2))/3,
+               0.0,1, 0.0);
+  } else {
+    gluLookAt (0.0, (-(tamX+2))/10, (tamX+2)/10*6,
+               0.0,(-(tamX+2))/20, (-(tamX+2))/3,
+               0.0,1, 0.0);
+  }
+  glTranslatef((-tamX)/2 + avanceX,(-tamY)/2 + avanceY,camUpDown);
+}
+
 void cambioCamara() {
   Punto salida = (j.listaNiveles[nivelActual]).salida;
   if (camara == 1) {
-    // Vista en primera perona
-    gluLookAt(posActualJugador.getX(),posActualJugador.getY(),2,
-	      posActualJugador.getX(),posActualJugador.getY()+2,0,
-	      0.0,1.0,0.0);
+    camara1();
   }
   else if (camara == 2) {
-    // Vista desde arriba cerca del jugador
-    gluLookAt(posActualJugador.getX(),posActualJugador.getY(),2,
-	      posActualJugador.getX(),posActualJugador.getY()+2,0,
-	      0.0,1.0,0.0);
+    camara2();
   } else if (camara == 3) {
-    //Vista desde la salida
-    gluLookAt(salida.getX(),salida.getY(),2,
-	      salida.getY(),salida.getY(),0,
-	      0.0,1.0,0.0);
+    camara3();
   } else if (camara == 4) {
     // Vista de las 3+1
   } else {
-    // Vista desde Arriba de TODO el tablero
-    if (tamX == tamY) {
-      gluLookAt (0.0, (-(tamX+2))/10, (tamY+2)/10*6,
-                 0.0+giroH, giroV+(-(tamY+2))/20, (-(tamX+2))/3,
-                 0.0,1, 0.0);
-    } else if (tamX < tamY) {
-      gluLookAt (0.0, (-(tamY+2))/10, (tamY+2)/10*6,
-                 0.0+giroH, giroV+(-(tamY+2))/20, (-(tamY+2))/3,
-                 0.0,1, 0.0);
-    } else {
-      gluLookAt (0.0, (-(tamX+2))/10, (tamX+2)/10*6,
-                 0.0+giroH, giroV+(-(tamX+2))/20, (-(tamX+2))/3,
-                 0.0,1, 0.0);
-    }
-    glTranslatef((-tamX)/2 + avanceX,(-tamY)/2 + avanceY,camUpDown);
+    camaraA();
   }
+  glRotatef(rot, 0.0,0.0,1.0);
 }
 
 /* Alarma para controlar Turbo */
@@ -131,7 +209,6 @@ void display(void) {
   /* La CAMARA Como dato
   cam.go(tamX, tamY, giroH, giroV, avanceX, avanceY, camUpDown);
   */
-  glRotatef(rot, 0.0,0.0,1.0);
 
   /* Tablero */
 
@@ -144,13 +221,12 @@ void display(void) {
   glBindTexture(GL_TEXTURE_2D, texName2);
   glCallList(paredes);
   glDisable(GL_TEXTURE_2D);
-  /*
-  glLightfv(GL_LIGHT0, GL_POSITION, ambiente);
-  glLightfv(GL_LIGHT0, GL_POSITION, difusa);
-  glLightfv(GL_LIGHT0, GL_POSITION, especular);
-  glLightfv(GL_LIGHT0, GL_POSITION, posicion);
-  */ 
- glCallList(tablero);
+
+  // glLightfv(GL_LIGHT0, GL_POSITION, ambiente);
+  // glLightfv(GL_LIGHT0, GL_POSITION, difusa);
+  // glLightfv(GL_LIGHT0, GL_POSITION, especular);
+  // glLightfv(GL_LIGHT0, GL_POSITION, posicion);
+  glCallList(tablero);
 
   // Dibujar trayectoria de Jugador
   //  j.listaNiveles[nivelActual].j.dibujarTrayectoriaJ();
@@ -174,10 +250,6 @@ void reshape (int w, int h) {
   //  gluPerspective(90.0f, 1, 0.5, 100.0);
   gluPerspective(zoom, 1, 0.5, 100.0);
   glMatrixMode(GL_MODELVIEW);
-  /*
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
-  */
   cout << w << endl;
   cout << h << endl;
   venMain_w = w;
@@ -212,27 +284,30 @@ void subReshape (int w, int h) {
   gluPerspective(zoom, 1, 0.5, 100.0);
 
   glMatrixMode(GL_MODELVIEW);
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
+  //  glEnable(GL_LIGHTING);
+  // glEnable(GL_LIGHT0);
 }
 
 void flechas(int key, int x, int y) {
   switch(key) {
   case GLUT_KEY_LEFT:
+    angulo = -2;
     j.listaNiveles[nivelActual].j.dirIzquierda();
     break;
   case GLUT_KEY_RIGHT:
+    angulo = 2;
     j.listaNiveles[nivelActual].j.dirDerecha();
     break;
   case GLUT_KEY_DOWN:
+    angulo = -1;
     j.listaNiveles[nivelActual].j.dirAbajo();
-    //    giroV -= 2.0;
     break;
   case GLUT_KEY_UP:
+    angulo = 1;
     j.listaNiveles[nivelActual].j.dirArriba();
-    //    giroV += 2.0;
     break;
   }
+  j.listaNiveles[nivelActual].j.cambiarDireccion();
 }
 
 void teclaPausa() {
@@ -320,10 +395,8 @@ void subDisplay1() {
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
- // Vista desde arriba cerca del jugador
-  gluLookAt(posActualJugador.getX(),posActualJugador.getY(),2,
-	    posActualJugador.getX(),posActualJugador.getY()+2,0,
-	    0.0,1.0,0.0);
+  camara1();
+
   endSD();
   return;
 }
@@ -332,10 +405,7 @@ void subDisplay2() {
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  // Vista en primera perona
-  gluLookAt(posActualJugador.getX(),posActualJugador.getY(),2,
-	    posActualJugador.getX(),posActualJugador.getY()+2,0,
-	    0.0,1.0,0.0);
+  camara2();
   endSD();
   return;
 }
@@ -344,11 +414,7 @@ void subDisplay3() {
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  Punto salida = (j.listaNiveles[nivelActual]).salida;
-  //Vista desde la salida
-  gluLookAt(salida.getX(),salida.getY(),2,
-	    salida.getY(),salida.getY(),0,
-	    0.0,1.0,0.0);
+  camara3();
   endSD();
   return;
 }
@@ -357,21 +423,7 @@ void subDisplay4() {
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  // Vista desde Arriba de TODO el tablero
-  if (tamX == tamY) {
-    gluLookAt (0.0, (-(tamX+2))/10, (tamY+2)/10*6,
-	       0.0+giroH, giroV+(-(tamY+2))/20, (-(tamX+2))/3,
-	       0.0,1, 0.0);
-  } else if (tamX < tamY) {
-    gluLookAt (0.0, (-(tamY+2))/10, (tamY+2)/10*6,
-	       0.0+giroH, giroV+(-(tamY+2))/20, (-(tamY+2))/3,
-	       0.0,1, 0.0);
-  } else {
-    gluLookAt (0.0, (-(tamX+2))/10, (tamX+2)/10*6,
-	       0.0+giroH, giroV+(-(tamX+2))/20, (-(tamX+2))/3,
-	       0.0,1, 0.0);
-  }
-  glTranslatef((-tamX)/2 + avanceX,(-tamY)/2 + avanceY,camUpDown);
+  camaraA();
   endSD();
   return;
 }
@@ -529,37 +581,54 @@ void keyboard (unsigned char key, int x, int y)  {
       j.listaNiveles[nivelActual].setGo();
       //      teclaTrasXDer();
       break;
-
+    case 'N': case 'n':
+      varX += 0.1;
+      break;
+    case 'M': case 'm':
+      varX -= 0.1;
+      break;
+    case 'J': case 'j':
+      varY += 0.1;
+      break;
+    case 'K': case 'k':
+      varY -= 0.1;
+      break;
+    case 'I': case 'i':
+      varZ += 0.1;
+      break;
+    case 'O': case 'o':
+      varZ -= 0.1;
+      break;
     case 'T': case 't':
       if (camara != 4) {
-	camara = 4;
-	subVen1 = glutCreateSubWindow(venMain,GAP,GAP,subVen_w,subVen_h);
-	initVentana();
-	glutDisplayFunc(subDisplay1);
-	glutReshapeFunc(subReshape);
-	glutSpecialFunc(flechas);
-	glutKeyboardFunc(keyboard);
+        camara = 4;
+        subVen1 = glutCreateSubWindow(venMain,GAP,GAP,subVen_w,subVen_h);
+        initVentana();
+        glutDisplayFunc(subDisplay1);
+        glutReshapeFunc(subReshape);
+        glutSpecialFunc(flechas);
+        glutKeyboardFunc(keyboard);
 
-	subVen2 = glutCreateSubWindow(venMain,GAP+subVen_w+GAP,GAP,subVen_w,subVen_h);
-	initVentana();
-	glutDisplayFunc(subDisplay2);
-	glutReshapeFunc(subReshape);
-	glutSpecialFunc(flechas);
-	glutKeyboardFunc(keyboard);
+        subVen2 = glutCreateSubWindow(venMain,GAP+subVen_w+GAP,GAP,subVen_w,subVen_h);
+        initVentana();
+        glutDisplayFunc(subDisplay2);
+        glutReshapeFunc(subReshape);
+        glutSpecialFunc(flechas);
+        glutKeyboardFunc(keyboard);
 
-	subVen3 = glutCreateSubWindow(venMain,GAP,GAP+subVen_h+GAP,subVen_w,subVen_h);
-	initVentana();
-	glutDisplayFunc(subDisplay3);
-	glutReshapeFunc(subReshape);
-	glutSpecialFunc(flechas);
-	glutKeyboardFunc(keyboard);
+        subVen3 = glutCreateSubWindow(venMain,GAP,GAP+subVen_h+GAP,subVen_w,subVen_h);
+        initVentana();
+        glutDisplayFunc(subDisplay3);
+        glutReshapeFunc(subReshape);
+        glutSpecialFunc(flechas);
+        glutKeyboardFunc(keyboard);
 
-	subVen4 = glutCreateSubWindow(venMain,GAP+subVen_w+GAP,GAP+subVen_h+GAP,subVen_w,subVen_h);
-	initVentana();
-	glutDisplayFunc(subDisplay4);
-	glutReshapeFunc(subReshape);
-	glutSpecialFunc(flechas);
-	glutKeyboardFunc(keyboard);
+        subVen4 = glutCreateSubWindow(venMain,GAP+subVen_w+GAP,GAP+subVen_h+GAP,subVen_w,subVen_h);
+        initVentana();
+        glutDisplayFunc(subDisplay4);
+        glutReshapeFunc(subReshape);
+        glutSpecialFunc(flechas);
+        glutKeyboardFunc(keyboard);
       }
       break;
     case 'P': case 'p':
@@ -590,7 +659,7 @@ int main (int argc, char **argv) {
   char *archivo = argv[1];
   j = parse(archivo);
   initTamTablero(j, nivelActual);
-  initLuz();
+  //  initLuz();
   initPosicion();
 
   /* Inicialización de ventana */

@@ -29,23 +29,27 @@ class Punto
  public:
   double x;
   double y;
+  double z;
 
   // Constructor por defecto
   Punto() 
     {
-      x = 0;
-      y = 0;
+      x = 0.0;
+      y = 0.0;
+      z = 0.0;
     }
 
   // Constructor
-  Punto(double a, double b)
+  Punto(double a, double b, double c)
     {
       x = a;
       y = b;
+      z = c;
     }
   
   double getX();
   double getY();
+  double getZ();
   void setX(double val);
   void setY(double val);
   void Print();
@@ -181,6 +185,28 @@ class Objeto
 
 enum Direccion { IZQUIERDA, DERECHA, ARRIBA, ABAJO};
 
+class Quad {
+ public:
+  Punto v1;
+  Punto v2;
+  Punto v3;
+  Punto v4;
+
+  Quad () {
+    v1 = Punto();
+    v2 = Punto();
+    v3 = Punto();
+    v4 = Punto();
+  }
+
+  Quad (Punto v_1, Punto v_2, Punto v_3, Punto v_4) {
+    v1 = v_1;
+    v2 = v_2;
+    v3 = v_3;
+    v4 = v_4;
+  }
+};
+
 class Jugador
 {
  public:
@@ -195,6 +221,9 @@ class Jugador
   TriMesh *themesh;
   Coeficientes cf;
   Punto ubicacionActual;
+  time_t timeStamp;
+  vector<Quad> estela;
+  int cambioDir;
 
   Jugador() 
     {
@@ -208,6 +237,9 @@ class Jugador
       archivoMaya = NULL;
       ubicacionActual = Punto();
       cf = Coeficientes();
+      time(&timeStamp);
+      estela = vector<Quad>();
+      cambioDir = 1;
     }
 
   Jugador(int v, double vl, int t, double vlt, char *am, Punto pI)
@@ -218,6 +250,7 @@ class Jugador
       dir = ARRIBA;
       turbo = t;
       go = 0;
+      time(&timeStamp);
       velocidadTurbo = vlt;
       archivoMaya = am;
       ubicacionActual = pI;
@@ -226,6 +259,8 @@ class Jugador
       const char *filename = archivoMaya;
       themesh = TriMesh::read(filename);
       themesh->need_faces();
+      estela = vector<Quad>();
+      cambioDir = 1;
     }
 
   void Print();
@@ -239,6 +274,9 @@ class Jugador
   void desactivarTurbo();
   int getNumTurbo();
   double incrementarVel();
+  void dibujarEstela();
+  void actualizarVallas(double vel);
+  void cambiarDireccion();
 };
 
 class Contrincante {
@@ -263,7 +301,7 @@ class Contrincante {
     maya = mya;
     go = 0;
     ubicacionActual = Punto(t.listaPuntos[0].getX(), 
-                            t.listaPuntos[0].getY());
+                            t.listaPuntos[0].getY(),0.0);
     // Cargar maya
     const char *filename = maya;
     themesh = TriMesh::read(filename);
