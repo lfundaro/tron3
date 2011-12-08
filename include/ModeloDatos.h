@@ -221,6 +221,7 @@ class Jugador
   TriMesh *themesh;
   Coeficientes cf;
   Punto ubicacionActual;
+  Punto posicionInicial;
   time_t timeStamp;
   vector<Quad> estela;
   int cambioDir;
@@ -236,6 +237,7 @@ class Jugador
       velocidadIncremental = 0.0;
       archivoMaya = NULL;
       ubicacionActual = Punto();
+      posicionInicial = Punto();
       cf = Coeficientes();
       time(&timeStamp);
       estela = vector<Quad>();
@@ -254,6 +256,7 @@ class Jugador
       velocidadTurbo = vlt;
       archivoMaya = am;
       ubicacionActual = pI;
+      posicionInicial = pI;
 
       // Cargar maya
       const char *filename = archivoMaya;
