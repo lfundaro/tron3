@@ -126,7 +126,7 @@ void dibujarFractal() {
 
 int main(int argc, char *argv[]) {
   fipImage fp = fipImage();
-  if (fp.load("./texturas/doscolores.bmp"))
+  if (fp.load("./texturas/ridge.bmp"))
     cout << "Cargó" << endl;
   cout << "PaletteSize = " << fp.getPaletteSize() << endl;
   cout << "Bitmap line = " << fp.getLine() << endl;
@@ -140,23 +140,23 @@ int main(int argc, char *argv[]) {
   // transformada = ajustarPaleta(p, anchoPM, largoPM);
   
   int z = 0;
-
   
-  // cout << (int) p[0] << " " << (int) p[fp.getWidth()] << " " 
-  //      << (int) p[fp.getWidth()*2] << endl;//" " << (int) p[1] << " " << (int) p[2] <
-  //  < endl;
+  BYTE *monopix = (BYTE *) malloc(sizeof(fp.getWidth()*fp.getHeight()));
 
-  
-  // cout << (int) pal[0].rgbBlue << " " << (int) pal[0].rgbRed << " " <<
-  //   (int) pal[0].rgbGreen << endl;
-
-  cout << (int) p[0] << " " << (int) p[1] << " " << (int) p[2] << endl;
-
-  for(int fila = 0; fila < fp.getHeight(); fila++) {
-    for(int col = 0; col < fp.getLine(); col++) {
-      cout << (int) p[col + fila*fp.getWidth()] << " ";
+  for(int i = 0; i < fp.getHeight(); i++) {
+    for(int j = 0; j < fp.getLine(); j + 3) {
+      monopix[(j/3) + (i*fp.getLine()/3)] = p[j + i*fp.getLine()];
     }
   }
+
+  delete monopix;
+
+  // for(int fila = 0; fila < fp.getHeight(); fila++) {
+  //   for(int col = 0; col < fp.getLine(); col++) {
+  //     cout << (int) p[col + fila*fp.getWidth()] << " ";
+  //   }
+  //   cout << endl;
+  // }
   
   //  cout << "z = " << z << endl;
     // normalizarTransformada(transformada);
