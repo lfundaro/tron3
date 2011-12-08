@@ -457,6 +457,11 @@ void Nivel::dibujarObstaculos()
     }
 }
 
+
+Punto Nivel::getSalida() {
+  return salida;
+}
+
 // Dibuja la estela
 void Jugador::dibujarEstela() {
   glPushMatrix();

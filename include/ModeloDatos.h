@@ -305,7 +305,6 @@ class Contrincante {
     go = 0;
     ubicacionActual = Punto(t.listaPuntos[0].getX(), 
                             t.listaPuntos[0].getY(),0.0);
-    
     // Cargar maya
     const char *filename = maya;
     themesh = TriMesh::read(filename);
@@ -366,6 +365,7 @@ class Nivel
   void dibujarObstaculos();
   void setGo();
   void Print();
+  Punto getSalida();
 };
 
 class Juego
