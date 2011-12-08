@@ -12,9 +12,10 @@ using namespace std;
 TriMesh *themesh;
 float maximo;
 Coeficientes cf;
+double *transformada;
 
-#define ANCHOF 5
-#define LARGOF 5
+#define ANCHOF 20
+#define LARGOF 20
 #define ALTOF 5
 
 void display(void) {
@@ -26,9 +27,8 @@ void display(void) {
   
   glColor4f(1.0,0.0,0.0,0.5);
   
-  //  glColor3f(0.0f, 0.0f, 0.0f); // sets color to black.
+  //glColor3f(0.0f, 0.0f, 0.0f); // sets color to black.
   glBegin(GL_QUAD_STRIP);
-
   glVertex2f(-0.5f, 0.25f); // left corner of the roof
   glVertex2f(0.5f, 0.25f); // right corner of the roof
   glVertex2f(-0.5f, -0.5f); // bottom left corner of the house
@@ -52,82 +52,136 @@ void reshape (int w, int h) {
   glMatrixMode(GL_MODELVIEW);
 }
 
-// double sumatoria(int columna, int n, int ancho, fipImage fp) {
-//   double sum = 0.0;
-//   RGBQUAD *palette = fp.getPalette();
-//   for(int i = 0; i < ancho; i++) {
-//     sum += palette[columna + ancho*i];  
-//   }
-//   return sum;
-// }
+double sumarColumna(int rep, int ancho, int offset, int columna, 
+                    BYTE *pix) {
+  double sum = 0.0;
+  for(int i = 0; i < rep; i++) {
+    sum += pix[columna + offset +i*ancho]; 
+  }
+  return sum;
+}
 
-// double *ajustarPaleta(fipImage fp) {
-//   int nuevoAncho = fp.getWidth()/ANCHOF + fp.getWidth()%ANCHOF;
-//   int nuevoLargo = fp.getHeight()/LARGOF + fp.getHeight()%LARGOF;
-//   RGBQUAD *nuevaPaleta = (RGBQUAD *) malloc(sizeof(RGBQUAD)*
-//                                             (nuevoAncho)*(nuevoLargo));
+double sumarFila(int rep, int fila, int offset, double* transformadaI) {
+  double sum = 0.0;
+  for(int i = 0; i < rep; i++) {
+    sum += transformadaI[fila + offset + i];
+  }
+  return sum;
+}
 
-//   double *transformadaI = (double *) malloc(sizeof(double)*
-//                                             fp.getWidth()*nuevoLargo);
-//   // Transformación en i 
-//   for(int j = 0; j < fp.getWidth(); j++) {
-//     for(int i = 0; i < fp.getHeight()/LARGOF; i++) {
-//       transformadaI[i + j*nuevoAncho] = 
-//         sumatoria(j, fp.getHeight()/LARGOF, fp.getWidth())
-//         / (double) (fp.getHeight()/LARGOF);
-//     }
-//   }
+double *ajustarPaleta(BYTE *pix, int anchoPM, int largoPM) {
+  // int cuadradosAncho = ANCHOF / 2;
+  // int nuevoAncho = fp.getWidth()/cuadradosAncho;
+  // int cuadradosLargo = LARGOF / 2;
+  // int nuevoLargo = fp.getHeight() / cuadradosLargo;
+  int nuevoLargo = LARGOF;
+  int nuevoAncho = ANCHOF;
+  int tam_loteI = largoPM / LARGOF;
+  int tam_loteJ = anchoPM / ANCHOF;
+  //  int num_rep = LARGOF;
+  int offset = 0;
+  double *transformadaI = (double *) malloc(sizeof(double)*
+                                            anchoPM*ANCHOF);
+  // Transformación en i 
+  for(int j = 0; j < LARGOF; j++) {
+    for(int i = 0; i < anchoPM; i++) {
+      transformadaI[i + anchoPM*j] = 
+        sumarColumna(tam_loteI, anchoPM, offset, i, pix) / tam_loteI; 
+    }
+    offset += tam_loteI;
+  }
   
+  double *transformada = (double *) malloc(sizeof(double)*ANCHOF*LARGOF);
+  // Transformación en j 
+  for(int j = 0; j < LARGOF; j++) {
+    offset = 0;
+    for(int i = 0; i < ANCHOF; i++) {
+      transformada[i + ANCHOF*j] = 
+        sumarFila(tam_loteJ, j, offset, transformadaI) / tam_loteJ;
+      offset += tam_loteJ;
+    }
+  }
+  free(transformadaI);
+  return transformada;
+}
+
+void normalizarTransformada(double *transformada) {
+  for(int fila = 0; fila < LARGOF; fila++) {
+    for(int col = 0; col < ANCHOF; col++) {
+      transformada[col + fila*ANCHOF] = (double) ALTOF*transformada[col + fila*ANCHOF] / 
+        255.0 ;
+    }
+  }
+}
+
+// void dibujarFractal() {
+//   glPushMatrix();
+//   glBegin(GL_QUAD_STRIP);
+  
+//   glEnd();
+//   glPopMatrix();
 // }
 
 int main(int argc, char *argv[]) {
   fipImage fp = fipImage();
-  if (fp.load("./texturas/fractal.bmp"))
+  if (fp.load("./texturas/earth.bmp"))
     cout << "Cargó" << endl;
   cout << "PaletteSize = " << fp.getPaletteSize()/8 << endl;
   cout << "Bitmap line = " << fp.getLine()/8 << endl;
   cout << "ImageWidth = " << fp.getWidth() << endl;
   cout << "ImageHeight = " << fp.getHeight() << endl;
   cout << "bitsPerPixel = " << fp.getBitsPerPixel() << endl;
-  RGBQUAD * p = fp.getPalette();
-  //  cout << "Red = " << (int) p[0].rgbRed << endl;
+  //  RGBQUAD * p = fp.getPalette();
+  BYTE *p= fp.accessPixels();
+  int anchoPM = fp.getWidth();
+  int largoPM = fp.getHeight();
+  transformada = ajustarPaleta(p, anchoPM, largoPM);
   
+  normalizarTransformada(transformada);
+  
+  for(int fila = 0; fila < LARGOF; fila++) {
+    for(int col = 0; col < ANCHOF; col++) {
+      cout << "(" << fila << "," << col << ") = " << 
+        transformada[col + fila*ANCHOF] << endl;
+    }
+  }
+
   // for(int i = 0; i < fp.getHeight(); i++) {
   //   for(int j = 0; j < fp.getWidth(); j++) {
   //     int r,g,b;
-  //     r = (int) p[j + i*fp.getWidth()].rgbRed;
-  //     g = (int) p[j + i*fp.getWidth()].rgbGreen;
-  //     b = (int) p[j + i*fp.getWidth()].rgbBlue;
-  //     // cout << "Red = " << r << endl;
-  //     // cout << "Green = " << g << endl;
-  //     // cout << "Blue = " << b << endl;
+  //     r = (int) p[j + i*fp.getWidth()];
+  //     g = (int) p[j + i*fp.getWidth()];
+  //     b = (int) p[j + i*fp.getWidth()];
+  //     cout << "Red = " << r << endl;
+  //     cout << "Green = " << g << endl;
+  //     cout << "Blue = " << b << endl;
   //   }
   // }
 
-  // /* Inicialización de ventana */
-  // glutInit(&argc, argv);
-  // glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB |  GLUT_DEPTH);
-  // glutInitWindowSize (1280,800);
-  // glutInitWindowPosition (100, 150);
+  /* Inicialización de ventana */
+  glutInit(&argc, argv);
+  glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB |  GLUT_DEPTH);
+  glutInitWindowSize (1280,800);
+  glutInitWindowPosition (100, 150);
 
-  // glutCreateWindow (argv[0]);
-  // /* Propiedades de openGL */
-  // glEnable(GL_DEPTH_TEST);
-  // glEnable( GL_LINE_SMOOTH );
-  // glEnable( GL_POLYGON_SMOOTH );
-  // glClearDepth (1.0f);
-  // glClearColor(0.0,0.0,0.0,0.0f);
-  // glShadeModel(GL_SMOOTH);
+  glutCreateWindow (argv[0]);
+  /* Propiedades de openGL */
+  glEnable(GL_DEPTH_TEST);
+  glEnable( GL_LINE_SMOOTH );
+  glEnable( GL_POLYGON_SMOOTH );
+  glClearDepth (1.0f);
+  glClearColor(0.0,0.0,0.0,0.0f);
+  glShadeModel(GL_SMOOTH);
 
-  // glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
-  // glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-  // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  // glEnable( GL_BLEND );
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable( GL_BLEND );
 
-  // /* Directivas para graficar */
-  // glutReshapeFunc(reshape);
-  // glutDisplayFunc(display);
-  // glutMainLoop();
+  /* Directivas para graficar */
+  glutReshapeFunc(reshape);
+  glutDisplayFunc(display);
+  glutMainLoop();
 
   return 0;
 }
