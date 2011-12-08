@@ -35,10 +35,10 @@
       </punto>
     </posInicial>
 	<turbo>
-	  2
+	  4
 	</turbo>
 	<velocidadTurbo>
-          2
+          5
 	</velocidadTurbo>
         <maya>
           <archivo>

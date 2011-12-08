@@ -972,7 +972,7 @@ void keyboard (unsigned char key, int x, int y)  {
     case 32: // TURBO !
       if (j.listaNiveles[nivelActual].j.getNumTurbo() > 0) {
         j.listaNiveles[nivelActual].j.activarTurbo();
-        alarm(1);
+        alarm(2);
       }
       break;
     }

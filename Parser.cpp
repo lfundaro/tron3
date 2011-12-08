@@ -39,7 +39,7 @@ Jugador parseJugador(TiXmlHandle rootJugador, int vidas)
 {
   // disparo
   TiXmlElement *pElem = rootJugador.FirstChild("velocidad").Element();
-  double velocidad = atof(pElem->GetText())/5.0;
+  double velocidad = atof(pElem->GetText());///5.0;
   pElem = rootJugador.FirstChild("posInicial").Element();
   TiXmlHandle rootPosInicial(pElem);
   pElem = rootPosInicial.FirstChild("punto").Element();
@@ -48,7 +48,7 @@ Jugador parseJugador(TiXmlHandle rootJugador, int vidas)
   pElem = rootJugador.FirstChild("turbo").Element();
   int turbo = atoi(pElem->GetText());
   pElem = rootJugador.FirstChild("velocidadTurbo").Element();
-  double velocidadTurbo = atof(pElem->GetText())/5.0;
+  double velocidadTurbo = atof(pElem->GetText());
   pElem = rootJugador.FirstChild("maya").Element();
   TiXmlHandle rootMaya(pElem);
   pElem = rootMaya.FirstChild("archivo").Element();
