@@ -283,6 +283,25 @@ void decidirVida() {
     glBindTexture(GL_TEXTURE_2D, texVida0);
 }
 
+void decidirVelocidad() {
+  float base = -45;
+  double velocidad = (j.listaNiveles[nivelActual]).j.velocidadEnAceleracion;
+  double velocidadMax = (j.listaNiveles[nivelActual]).j.velocidad;
+  double velocidadTurbo = (j.listaNiveles[nivelActual]).j.velocidadTurbo;
+  if (velocidad == velocidadTurbo) {
+    printf("1\n");
+    glTranslatef(base+30,-10,0);
+  } else if (velocidad < velocidadTurbo && velocidad-0.2 > velocidadMax) {
+    printf("2\n");
+    glTranslatef(base+13+((float) (velocidad*130)),-10,0);
+  } else if (velocidad == velocidadMax) {
+    printf("3\n");
+  } else if (velocidad < velocidadMax) {
+    printf("4\n");
+    glTranslatef(base+11+((float) (velocidad*110)),-10,0);
+  }
+}
+
 void
 datos_display(void)
 {
@@ -328,18 +347,17 @@ datos_display(void)
   glColor3f(0.0,1.0,1.0);glTexCoord2f(1.0f, 1.0f);glVertex3f(45,20.0,0.0);
   glColor3f(0.0,1.0,1.0);glTexCoord2f(0.0f, 1.0f);glVertex3f(0.0,20.0,0.0);
   glEnd();
+
   glPopMatrix();
   glDisable(GL_TEXTURE_2D);
   glPushMatrix();
-  glTranslatef(base+11,-10,0);
+  decidirVelocidad();
   glBegin(GL_TRIANGLES) ;
   glColor3f(1.0,0.0,0.0);glTexCoord2f(0.0f, 0.0f);glVertex3f(0.0,0.0,-1.0);
   glColor3f(1.0,0.0,0.0);glTexCoord2f(1.0f, 0.0f);glVertex3f(3.0,0.0,-1.0);
   glColor3f(1.0,0.0,0.0);glTexCoord2f(1.0f, 1.0f);glVertex3f(1.5,5.0,-1.0);
   glEnd();
   glPopMatrix();
-
-
 
   glutPostRedisplay();
   glutSwapBuffers();
