@@ -156,7 +156,7 @@ void camara3(){
   //Vista desde la salida
   gluLookAt (salida.getX(),salida.getY(),5,
 	     0,0,0,
-	     0,0,1);
+	     0,0,1.0);
 }
     
 void camaraA(){
