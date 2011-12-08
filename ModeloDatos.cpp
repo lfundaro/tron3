@@ -235,9 +235,9 @@ int Jugador::getNumTurbo() {
 }
 
 double Jugador::incrementarVel() {
-  if (velocidadIncremental >= velocidad) return velocidad;
-  velocidadIncremental += velocidadIncremental;
-  return velocidadIncremental;
+  if (velocidadEnAceleracion >= velocidad) return velocidad;
+  velocidadEnAceleracion += velocidadIncremental;
+  return velocidadEnAceleracion;
 }
 
 void Nivel::setGo() {

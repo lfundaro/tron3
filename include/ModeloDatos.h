@@ -217,6 +217,7 @@ class Jugador
   int turbo;
   double velocidadTurbo;
   double velocidadIncremental;
+  double velocidadEnAceleracion;
   char * archivoMaya;
   TriMesh *themesh;
   Coeficientes cf;
@@ -235,6 +236,7 @@ class Jugador
       go = 0;
       velocidadTurbo = 0.0;
       velocidadIncremental = 0.0;
+      velocidadEnAceleracion = 0.0;
       archivoMaya = NULL;
       ubicacionActual = Punto();
       posicionInicial = Punto();
@@ -248,7 +250,8 @@ class Jugador
     {
       vidas = v;
       velocidad = vl;
-      velocidadIncremental = vl / 100000.0;
+      velocidadIncremental = vl / 100.0;
+      velocidadEnAceleracion = 0.0;
       dir = ARRIBA;
       turbo = t;
       go = 0;
