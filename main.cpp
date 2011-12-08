@@ -315,7 +315,8 @@ void endSD() {
   /* Tablero */
   glEnable(GL_TEXTURE_2D);
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-  glBindTexture(GL_TEXTURE_2D, texName);
+  //  glBindTexture(GL_TEXTURE_2D, texName);
+  glBindTexture(GL_TEXTURE_2D, texVida1);
   glCallList(base);
   glBindTexture(GL_TEXTURE_2D, texName2);
   glCallList(paredes);
