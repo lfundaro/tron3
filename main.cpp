@@ -414,6 +414,7 @@ void endSD() {
   j.listaNiveles[nivelActual].dibujarJugadores();
   // Dibujar obstáculos
   j.listaNiveles[nivelActual].dibujarObstaculos();
+  //  j.listaNiveles[nivelActual].dibujarFractal();
   glutPostRedisplay();
   glutSwapBuffers();
   glFlush ();

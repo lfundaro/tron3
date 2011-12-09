@@ -435,6 +435,89 @@ void Nivel::dibujarJugadores() {
     }
 }
 
+double Nivel::sumarColumna(int rep, int ancho, int offset, int columna, 
+                    double *pix) {
+  double sum = 0.0;
+  for(int i = 0; i < rep; i++) {
+    sum += pix[columna + offset +i*ancho]; 
+  }
+  return sum;
+}
+
+double Nivel::sumarFila(int rep, int fila, int anchoPM, int offset, 
+                        double* transformadaI) {
+  double sum = 0.0;
+  for(int i = 0; i < rep; i++) {
+    sum += transformadaI[fila*anchoPM + offset + i];
+  }
+  return sum;
+}
+
+double * Nivel::ajustarPixels(double *pix, int anchoPM, int largoPM) {
+  int nuevoLargo = PUNTOSY;
+  int nuevoAncho = PUNTOSX;
+  int tam_loteI = largoPM / PUNTOSY;
+  int tam_loteJ = anchoPM / PUNTOSX;
+  int offset = 0;
+  double *transformadaI = (double *) malloc(sizeof(double)*
+                                            anchoPM*PUNTOSY);
+  // Transformación en i 
+  for(int j = 0; j < PUNTOSY; j++) {
+    for(int i = 0; i < anchoPM; i++) {
+      transformadaI[i + anchoPM*j] = 
+        sumarColumna(tam_loteI, anchoPM, offset, i, pix) / tam_loteI; 
+    }
+    offset += tam_loteI;
+  }
+  
+  double *transformada = (double *) malloc(sizeof(double)*PUNTOSX*PUNTOSY);
+  // Transformación en j 
+  for(int j = 0; j < PUNTOSY; j++) {
+    offset = 0;
+    for(int i = 0; i < PUNTOSX; i++) {
+      transformada[i + PUNTOSX*j] = 
+        sumarFila(tam_loteJ, j, anchoPM, offset, transformadaI) / tam_loteJ;
+      offset += tam_loteJ;
+    }
+  }
+  free(transformadaI);
+  return transformada;
+}
+
+void Nivel::normalizarTransformada(double* transformada) {
+  for(int fila = 0; fila < PUNTOSY; fila++) {
+    for(int col = 0; col < PUNTOSX; col++) {
+      transformada[col + fila*PUNTOSX] = (double) 
+        ALTOF*transformada[col + fila*PUNTOSX] / 255.0;
+    }
+  }
+}
+
+double * Nivel::cargarFractal() {
+  fipImage fp = fipImage();
+  if (fp.load(terrenoBN))
+    cout << "Terreno cargado exitosamente" << endl;
+  BYTE *p= fp.accessPixels();
+  int anchoPM = fp.getWidth();
+  int largoPM = fp.getHeight();
+
+  double *monopix = (double *) malloc(sizeof(double)*anchoPM*largoPM);
+  int z = 0;
+  for(int i = 0; i < fp.getHeight(); i++) {
+    for(int j = 0; j < fp.getLine(); j = j + 3) {
+      monopix[z] = (double) p[j + i*fp.getLine()];
+      z++;
+    }
+  }
+  
+  // Se construye y normaliza transformada
+  double *tr = ajustarPixels(monopix, anchoPM, largoPM);
+  normalizarTransformada(tr);
+  free(monopix);
+  return tr;
+}
+
+
 // Dibujar objeto
 void Objeto::dibujarObjeto() {
   glPushMatrix();
@@ -455,6 +538,31 @@ void Nivel::dibujarObstaculos()
     {
       listaObjetos[i].dibujarObjeto();
     }
+}
+
+void Nivel::dibujarFractal() {
+  double sepX = (double) TERRENOX / (double) PUNTOSX;
+  double sepY = (double) TERRENOY / (double) PUNTOSY;
+  double baseX = TERRENOX;//*5.0;
+  double baseY = TERRENOY;//*5.0 + 6.0;
+  glPushMatrix();
+  glColor4f(1.0,0.0,0.0,0.5);
+  glTranslatef(0.0,0.0,1.5);
+  for(int i = 0; i < PUNTOSY - 1; i++) {
+    for(int j = 0; j < PUNTOSX - 1; j++) {
+      glBegin(GL_TRIANGLES);
+      // Primer triangulo
+      glVertex3f(baseX + sepX*j,baseY - sepY*j,transformada[j + i*PUNTOSX]);
+      glVertex3f(baseX + sepX*(j+1),baseY - sepY*(j+1),transformada[j + i*PUNTOSX + (PUNTOSX + 1)]);
+      glVertex3f(sepX*j + baseX, baseY - sepY*(j+1), transformada[j + i*PUNTOSX + PUNTOSX]);
+      // Segundo triangulo
+      glVertex3f(sepX*j + baseX,baseY - sepY*j, transformada[j + i*PUNTOSX]);
+      glVertex3f(sepX*(j+1) + baseX,baseY  - sepY*j ,transformada[j + 1 + i*PUNTOSX]);
+      glVertex3f(sepX*(j+1) + baseX,baseY - sepY*(j+1),transformada[j + i*PUNTOSX + (PUNTOSX + 1)]);
+      glEnd();
+    }
+  }
+  glPopMatrix();
 }
 
 

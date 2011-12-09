@@ -10,6 +10,7 @@
 #include <math.h>
 #include <time.h>
 #include "TriMesh.h"
+#include "FreeImagePlus.h"
 
 #define RAD_INT_TORUS 1.0
 #define RAD_EXT_TORUS 2.0
@@ -20,7 +21,11 @@
 #define COEF_INFECTED 2.0
 #define COEF_CROWDMECH 2.0
 #define COEF_CROWDSTDF 2.0
-
+#define PUNTOSX 400
+#define PUNTOSY 400
+#define ALTOF 5
+#define TERRENOX 10
+#define TERRENOY 10
 
 using namespace std;
 
@@ -176,7 +181,6 @@ class Objeto
       const char *filename = archivoMaya;
       themesh = TriMesh::read(filename);
       themesh->need_faces();
-      cout << "Objeto = " << archivoMaya << endl;
     }
 
   void Print();
@@ -332,6 +336,7 @@ class Nivel
   vector<Contrincante> listaContrincantes;
   int numObjetos;
   vector<Objeto> listaObjetos;
+  double * transformada;
 
   Nivel() 
     {
@@ -345,6 +350,7 @@ class Nivel
       listaContrincantes = vector<Contrincante>();
       numObjetos = 0;
       listaObjetos = vector<Objeto>();
+      transformada = NULL;
     }
   
   Nivel(int ident, int vd, Tablero tab, Punto sal, char * tBN, 
@@ -361,14 +367,23 @@ class Nivel
       listaContrincantes = listContr;
       numObjetos = nObjetos;
       listaObjetos = listObj;
+      transformada = cargarFractal();
     }
 
   void dibujarTrayectoriaContrincantes();
   void dibujarJugadores();
   void dibujarObstaculos();
+  void dibujarFractal();
   void setGo();
   void Print();
   Punto getSalida();
+  double * cargarFractal();
+  void normalizarTransformada(double *tr);
+  double * ajustarPixels(double *pix, int anchoPM, int largoPM);
+  double sumarFila(int rep, int fila, int anchoPM, int offset, 
+                   double* transformadaI);
+  double sumarColumna(int rep, int ancho, int offset, int columna, 
+                      double *pix);
 };
 
 class Juego
