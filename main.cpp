@@ -109,6 +109,7 @@ int venMain_h = 800;
 int venDato_w = 460;
 int subVen_w = (venMain_w - (3*GAP))/2;
 int subVen_h = (venMain_h - (3*GAP))/2;
+float color[3];
 /* FIN Variables para el manejo de la Ventana y Sub-Ventanas*/
 
 /* FIN Variables globales */
@@ -117,10 +118,6 @@ float varY = 0;
 float varZ = 0;
 //Punto inicio =  (j.listaNiveles[nivelActual]).j.ubicacionActual;
 float angulo = 1;
-float dtr( float d )
-{
-        return d*3.141592/180;
-}
 
 void camara1(){
   Punto posActualJugador = (j.listaNiveles[nivelActual]).j.ubicacionActual;
@@ -284,21 +281,23 @@ void decidirVida() {
 }
 
 void decidirVelocidad() {
-  float base = -45;
-  double velocidad = (j.listaNiveles[nivelActual]).j.velocidadEnAceleracion;
-  double velocidadMax = (j.listaNiveles[nivelActual]).j.velocidad;
-  double velocidadTurbo = (j.listaNiveles[nivelActual]).j.velocidadTurbo;
-  if (velocidad == velocidadTurbo) {
-    printf("1\n");
-    glTranslatef(base+30,-10,0);
-  } else if (velocidad < velocidadTurbo && velocidad-0.2 > velocidadMax) {
-    printf("2\n");
-    glTranslatef(base+13+((float) (velocidad*130)),-10,0);
-  } else if (velocidad == velocidadMax) {
-    printf("3\n");
-  } else if (velocidad < velocidadMax) {
-    printf("4\n");
-    glTranslatef(base+11+((float) (velocidad*110)),-10,0);
+  float base = -34;
+  float max = +15;
+  float turbo = +7;
+  float base2 = -19;
+  float velocidad = (float) (j.listaNiveles[nivelActual]).j.velocidadEnAceleracion;
+  float velocidadMax = (float) (j.listaNiveles[nivelActual]).j.velocidad;
+  float velocidadTurbo = (float) (j.listaNiveles[nivelActual]).j.velocidadTurbo;
+  if (velocidad <= velocidadMax) {
+    glTranslatef((base+(velocidad/velocidadMax)*max),-10,0);
+    color[0] = 0.0;
+    color[1] = 1.0;
+    color[2] = 1.0;
+  } else if (velocidad > velocidadMax) {
+    glTranslatef(base+max+((velocidad/velocidadTurbo)*turbo),-10,0);
+    color[0] = 1.0;
+    color[1] = 0.0;
+    color[2] = 0.0;
   }
 }
 
@@ -342,10 +341,10 @@ datos_display(void)
   glBindTexture(GL_TEXTURE_2D, texAcel);
   glTranslatef(base,-10,0);
   glBegin(GL_QUADS) ;
-  glColor3f(0.0,1.0,1.0);glTexCoord2f(0.0f, 0.0f);glVertex3f(0.0,0.0,0.0);
-  glColor3f(0.0,1.0,1.0);glTexCoord2f(1.0f, 0.0f);glVertex3f(45,0.0,0.0);
-  glColor3f(0.0,1.0,1.0);glTexCoord2f(1.0f, 1.0f);glVertex3f(45,20.0,0.0);
-  glColor3f(0.0,1.0,1.0);glTexCoord2f(0.0f, 1.0f);glVertex3f(0.0,20.0,0.0);
+  glColor3f(color[0],color[1],color[2]);glTexCoord2f(0.0f, 0.0f);glVertex3f(0.0,0.0,0.0);
+  glColor3f(color[0],color[1],color[2]);glTexCoord2f(1.0f, 0.0f);glVertex3f(45,0.0,0.0);
+  glColor3f(color[0],color[1],color[2]);glTexCoord2f(1.0f, 1.0f);glVertex3f(45,20.0,0.0);
+  glColor3f(color[0],color[1],color[2]);glTexCoord2f(0.0f, 1.0f);glVertex3f(0.0,20.0,0.0);
   glEnd();
 
   glPopMatrix();
