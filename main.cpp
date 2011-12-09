@@ -28,6 +28,7 @@ float giroV = 0;
 int nivelActual = 0;
 vector<Punto> posContrincante;
 double incr = 0.001;
+int turboMode = 0;
 
 float zoom = 90.0;
 #define ZOOM_FACTOR 1.0
@@ -384,6 +385,7 @@ datos_display(void)
 /* Alarma para controlar Turbo */
 void  SIGALRM_control (int signum) {
   j.listaNiveles[nivelActual].j.desactivarTurbo();
+  turboMode = 0;
 }
 
 void endSD() {
@@ -969,8 +971,9 @@ void keyboard (unsigned char key, int x, int y)  {
       offVentanas();
       break;
     case 32: // TURBO !
-      if (j.listaNiveles[nivelActual].j.getNumTurbo() > 0) {
+      if (j.listaNiveles[nivelActual].j.getNumTurbo() > 0 && turboMode == 0) {
         j.listaNiveles[nivelActual].j.activarTurbo();
+	turboMode = 1;
         alarm(2);
       }
       break;

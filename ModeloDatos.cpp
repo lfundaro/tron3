@@ -222,12 +222,12 @@ void Jugador::setGo() {
 }
 
 void Jugador::activarTurbo() {
-  velocidadEnAceleracion += velocidadTurbo;
+  velocidadEnAceleracion = velocidadTurbo;
   turbo--;
 }
 
 void Jugador::desactivarTurbo() {
-  velocidadEnAceleracion -= velocidadTurbo;
+  velocidadEnAceleracion = velocidad;
 }
 
 int Jugador::getNumTurbo() {
